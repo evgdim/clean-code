@@ -29,6 +29,11 @@ for(int i = 0; i < 10; i++) {
 + int elapsedTimeInDays;
 ```
 
+```diff
+- List<Person> listOfPeople;
++ List<Person> owners;
+```
+
 ## Make Meaningful Distinctions
 
 ```diff
