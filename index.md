@@ -1,10 +1,8 @@
-<link href="styles.css" rel="stylesheet"></link>
-
-# <center>Clean Code</center>
+# <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
 # Overview
-
+TODO
 # Names
 
 ## Scope
@@ -86,4 +84,71 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 ## ~~Avoid member prefixes~~ Be embarrassed of member prefixes 
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
-## Classes
+## Class names
+
+## Branch names, commit mesages, PR descriptions, etc
+
+Try to prefix names, mesages and descriptions with an issue identifier if the code change is related.
+
+<pre>
+git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
+</pre>
+
+# Functions
+
+## Small
+
+### ~~Function should fit on the screen.~~
+<img src="retro_computer.png" alt="drawing" width="200"/>
+
+### ***Function has the right size when you cannot extract anything more from it as a function.***
+
+
+### You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
+
+# Code smells
+
+## Bloaters
+Bloaters are code, methods and classes that have increased to such gargantuan proportions that they are hard to work with. Usually these smells do not crop up right away, rather they accumulate over time as the program evolves (and especially when nobody makes an effort to eradicate them).
+1. Long Method
+2. Large Class
+3. **Primitive Obsession**
+4. Long Parameter List
+5. **Data Clumps**
+
+## Object-Orientation Abusers
+All these smells are incomplete or incorrect application of object-oriented programming principles.
+1. **Switch Statements**
+2. **Temporary Field**
+3. Refused Bequest
+4. Alternative Classes with Different Interfaces
+
+## Change Preventers
+These smells mean that if you need to change something in one place in your code, you have to make many changes in other places too. Program development becomes much more complicated and expensive as a result.
+1. Divergent Change
+2. **Shotgun Surgery**
+3. Parallel Inheritance Hierarchies
+
+## Dispensables
+A dispensable is something pointless and unneeded whose absence would make the code cleaner, more efficient and easier to understand.
+1. Comments
+2. **Duplicate Code**
+3. Lazy Class
+4. Data Class
+5. Dead Code
+6. **Speculative Generality**
+
+## Couplers
+All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
+1. Feature Envy
+2. Inappropriate Intimacy
+3. Message Chains
+4. Middle Man
+5. Incomplete Library Class
+
+
+
+# Sources
+
+1. Clean Code by Uncle Bob Martin
+2. https://sourcemaking.com/refactoring/smells
