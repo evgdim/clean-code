@@ -81,7 +81,18 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 
 ```
 
-## ~~Avoid member prefixes~~ Be embarrassed of member prefixes 
+## Extract variable when it makes the code more readable 
+```diff
+-if(context.getAttribute("TEST_MODE")) {...}
++boolean isTestMode = context.getAttribute("TEST_MODE");
++if(isTestMode) {...}
+```
+Stick to expressions when they could be read as a sentence
+```java
+if(type.startsWith("BASIC_")) {...}
+```
+
+## Avoid member prefixes
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
 ## Class names
@@ -106,6 +117,43 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 
 ### You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
+
+## Do one thing
+
+**FUNCTIONS SHOULD DO ONE THING. THEY SHOULD DO IT WELL.
+THEY SHOULD DO IT ONLY.**
+
+
+## One Level of Abstraction per Function
+
+Don't mix different abstractions in one function:
+* business logic
+* data access
+* string concatenation
+* http/server stuff
+
+```java
+   public String someFunction() {
+      StringBuilder message = new StringBuilder();
+      Overdraft allowedOverdraft = client.calculateAllowedOverdraft();
+      if(allowedOverdraft.getAmount() < MINIMUM_OVERDRAFT) {
+         message.append("amount < MIN ")
+      } 
+      Manager manager = jdbcTemplate.query("select * from Managers", new ManagerRowMapper());
+      if(whatever == null) {
+         message.append("no manager");
+      }
+      return message.toString();
+   }
+```
+## Reading Code from Top to Bottom: The Stepdown Rule
+TODO
+
+## Use Descriptive Names
+Fully describe what the function does in it's name. 
+
+## Function Arguments
+TODO
 # Code smells
 
 ## Bloaters
