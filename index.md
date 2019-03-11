@@ -2,7 +2,10 @@
 <center>Evgeni Dimitrov</center>
 
 # Overview
-TODO
+* Is my code easy to read?
+* Is my code easy to unit test?
+* How easy is to find bugs and chnage functionality?
+
 # Names
 
 ## Scope
