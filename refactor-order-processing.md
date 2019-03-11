@@ -170,3 +170,50 @@ public void processToBeProcessedOrinocoOrders() {
         writeMonitor(numberSuccess, numberFailure);
     }
 ```
+
+# 4. Extract method - for loop body
+```java
+    public void processToBeProcessedOrinocoOrders() {
+        List<OrinocoOrder> ordersToBeProcessed = getOrdersOrEmpty();
+
+        Short numberSuccess = 0;
+        Short numberFailure = 0;
+        for (OrinocoOrder order : ordersToBeProcessed) {
+            processOrder(order, numberSuccess, numberFailure);
+        }
+        writeMonitor(numberSuccess, numberFailure);
+    }
+
+    private void processOrder(OrinocoOrder order, Short numberSuccess, Short numberFailure) {
+        OrinocoEmailConfig config = null;
+        try {
+            config = props.findByOriginSystem(order.getOriginatingSystem());
+            if(config != null) {
+                if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
+                    if(order.getStructuredData() != null) {
+                        List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
+                        order.getStructuredData().setListItemInfo(itemInfos);
+                    }
+                    OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
+                    orderRequestBom.setOrder(order);
+                    OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
+                    if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
+                        oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
+                        numberSuccess++;
+                    } else {
+                        numberFailure++;
+                        incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
+                    }
+                } else {
+                }
+            } else {
+            }
+        } catch (Exception e) {
+            numberFailure++;
+            try {
+                incrementRetryCount(order.getId(), config, e.getMessage());
+            } catch (Exception incE) {
+            }
+        }
+    }
+```
