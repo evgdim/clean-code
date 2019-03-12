@@ -2,9 +2,16 @@
 <center>Evgeni Dimitrov</center>
 
 # Overview
+
+## Questions to answer
 * Is my code easy to read?
 * Is my code easy to unit test?
 * How easy is to find bugs and chnage functionality?
+
+## When to reafactor
+1. Right after the code is working and the unit tests are done
+2. In the scope of a rlatevly big chnage
+3. Before the testing has started
 
 # Names
 
