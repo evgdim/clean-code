@@ -1,6 +1,13 @@
 # <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
+- [Overview](#overview)
+   - [Questions to answer](#questions-to-answer)
+   - [When to reafactor](#when-to-reafactor)
+- [Names](#names)
+   - [Scope](#Scope)
+      - [Variable names should be proportional to their scope](#Variable-names-should-be-proportional-to-their-scope)
+
 # Overview
 
 ## Questions to answer
@@ -23,8 +30,10 @@ for(int i = 0; i < 10; i++) {
 }
 ```
 
-### Avoid single letter variables (exceptions: lambdas and very short methods)
-### Avoid letters “l” and “O” as a variable names
+### Avoid single letter variables 
+   exceptions: lambdas and very short methods
+   
+   Avoid letters “l” and “O” as a variable names
 
 ```java
 .map(l -> l.getParent())
