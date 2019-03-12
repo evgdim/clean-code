@@ -173,6 +173,11 @@ Fully describe what the function does in it's name.
 
 ## Function Arguments
 TODO
+
+# API/Module desfing
+
+TODO: Desing a class or module like a library.
+
 # Code smells
 
 ## Bloaters
