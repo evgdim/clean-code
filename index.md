@@ -172,7 +172,22 @@ TODO
 Fully describe what the function does in it's name. 
 
 ## Function Arguments
-TODO
+
+### Good
+* No arguments - niladic
+* Single argument - monadic
+* Two arguments - dyadic
+* Three arguments - triadic
+### Bad
+
+### Avoid output argumnets
+### Try to keep the arguments on the same level of abstraction as the function
+### Avoid boolean parameters - this implies that the function does more than one thing
+### Consider wrapping some of the function arguments in a class when appropriate
+```diff
+-Circle makeCircle(double x, double y, double radius);
++Circle makeCircle(Point center, double radius);
+```
 
 # API/Module desfing
 
