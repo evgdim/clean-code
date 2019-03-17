@@ -188,7 +188,36 @@ Fully describe what the function does in it's name.
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
+## Side Effects
+### Extract environment (Date-time, properties, current OS)
 
+```java
+int getDaysToNewYear() {
+   LocalDate today = LocalDate.now();
+   LocalDate newYearsDay = LocalDate.of(today.getYear(), Month.DECEMBER, 31);
+   return Period.between(today, newYearsDay).getDays();
+}
+```
+```java
+@Test
+public void getDaysToNewYear_shouldReturn2_for29December() {
+   //Good luck
+}
+```
+
+```java
+int getDaysToNewYear(LocalDate today) {
+   LocalDate newYearsDay = LocalDate.of(today.getYear(), Month.DECEMBER, 31);
+   return Period.between(today, newYearsDay).getDays();
+}
+```
+
+```java
+@Test
+public void getDaysToNewYear_shouldReturn2_for29December() {
+   assertEquals(2, getDaysToNewYear(LocalDate.of(2019, Month.DECEMBER, 29)));
+}
+```
 # API/Module desfing
 
 TODO: Desing a class or module like a library.
