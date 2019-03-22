@@ -254,6 +254,9 @@ TODO example
 
 TODO: Desing a class or module like a library.
 
+# Design and use interfaces from consumer POV
+TODO
+
 # Code smells
 
 ## Bloaters
