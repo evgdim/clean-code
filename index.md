@@ -192,7 +192,27 @@ public void myFunction(List<Person> people) {
 ```
 
 ## Reading Code from Top to Bottom: The Stepdown Rule
-TODO
+```java
+if (null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.ACCEPTED);
+} else {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+}
+```
+
+```java
+if (isStatusError(response)) {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.OK);
+} else {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+...
+
+boolean isStatusError(Response response) {
+   return null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
+}
+```
 
 ## Use Descriptive Names
 Fully describe what the function does in it's name. 
