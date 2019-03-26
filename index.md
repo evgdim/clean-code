@@ -13,6 +13,8 @@
 ## Questions to answer
 * Is my code easy to read?
 * Is my code easy to unit test?
+* Is my code easy to reason?
+* Is my application easy to deploy?
 * How easy is to find bugs and chnage functionality?
 
 ## When to reafactor
