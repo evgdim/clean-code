@@ -167,6 +167,32 @@ Don't mix different abstractions in one function:
       return message.toString();
    }
 ```
+
+## One Level of Indentation per Function
+```java
+public void myFunction(List<Person> people) {
+   if(<some condition 1>) {
+      for(Person person : people) {
+         if(<some condition 2>) {
+            doStuff(person);
+         }
+      }
+   } else {
+      doOtherStuff(people);
+   }
+}
+```
+Do this instead:
+```java
+public void myFunction(List<Person> people) {
+   if(<some condition 1>) {
+      handleSomeCondition1(people);
+   } else {
+      doOtherStuff(people);
+   }
+}
+```
+
 ## Reading Code from Top to Bottom: The Stepdown Rule
 TODO
 
@@ -220,6 +246,12 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
    assertEquals(2, getDaysToNewYear(LocalDate.of(2019, Month.DECEMBER, 29)));
 }
 ```
+### Caching should be easily turned off
+
+### Separate side effects from business logic
+TODO example
+
+
 # API/Module desfing
 
 TODO: Desing a class or module like a library.
