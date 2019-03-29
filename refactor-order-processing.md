@@ -217,3 +217,76 @@ public void processToBeProcessedOrinocoOrders() {
         }
     }
 ```
+
+# 5. Remove external state
+
+```diff
++enum ProcessOrderResult {
++   SUCCESS, ERROR, NOT_PROCESSED
++}
+
+-private void processOrder(OrinocoOrder order, Short numberSuccess, Short numberFailure) {
++private ProcessOrderResult processOrder(OrinocoOrder order) {
+        OrinocoEmailConfig config = null;
+        try {
+            config = props.findByOriginSystem(order.getOriginatingSystem());
+            if(config != null) {
+                if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
+                    if(order.getStructuredData() != null) {
+                        List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
+                        order.getStructuredData().setListItemInfo(itemInfos);
+                    }
+                    OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
+                    orderRequestBom.setOrder(order);
+                    OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
+                    if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
+                        oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
+-                       numberSuccess++;
++                       return ProcessOrderResult.SUCCESS;
+                    } else {
+-                        numberFailure++;
+                        incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
++                       return ProcessOrderResult.ERROR;
+                    }
+                } else {
++                    return ProcessOrderResult.NOT_PROCESSED;
+                }
+            } else {
++                return ProcessOrderResult.NOT_PROCESSED;
+            }
+        } catch (Exception e) {
+-            numberFailure++;
+            try {
+                incrementRetryCount(order.getId(), config, e.getMessage());
+            } catch (Exception incE) {
+            }
++            return ProcessOrderResult.ERROR;
+        }
+    }
+```
+
+```diff
+- public void processToBeProcessedOrinocoOrders() {
+-    List<OrinocoOrder> ordersToBeProcessed = getOrdersOrEmpty();
+-
+-    Short numberSuccess = 0;
+-    Short numberFailure = 0;
+-    for (OrinocoOrder order : ordersToBeProcessed) {
+-        processOrder(order, numberSuccess, numberFailure);
+-    }
+-    writeMonitor(numberSuccess, numberFailure);
+-}
+
++public void processToBeProcessedOrinocoOrders() {
++    List<OrinocoOrder> ordersToBeProcessed = getOrdersOrEmpty();
++
++    List<ProcessOrderResult> processOrderResults =
++            ordersToBeProcessed.stream()
++            .map(this::processOrder)
++            .collect(Collectors.toList());
++
++    Long numberFailure = processOrderResults.stream().filter(r -> r == ProcessOrderResult.ERROR).count();
++    Long numberSuccess = processOrderResults.stream().filter(r -> r == ProcessOrderResult.SUCCESS).count();
++    writeMonitor(numberSuccess.shortValue(), numberFailure.shortValue());
++}
+```
