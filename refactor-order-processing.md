@@ -294,45 +294,67 @@ public void processToBeProcessedOrinocoOrders() {
 # Check point
 ```java
 public void processToBeProcessedOrinocoOrders() {
-        List<OrinocoOrder> ordersToBeProcessed = getOrdersOrEmpty();
+    List<OrinocoOrder> ordersToBeProcessed = getOrdersOrEmpty();
 
-        List<ProcessOrderResult> processOrderResults =
-                ordersToBeProcessed.stream()
-                .map(this::processOrder)
-                .collect(Collectors.toList());
+    List<ProcessOrderResult> processOrderResults =
+            ordersToBeProcessed.stream()
+            .map(this::processOrder)
+            .collect(Collectors.toList());
 
-        Long numberFailure = processOrderResults.stream().filter(r -> r == ProcessOrderResult.ERROR).count();
-        Long numberSuccess = processOrderResults.stream().filter(r -> r == ProcessOrderResult.SUCCESS).count();
-        writeMonitor(numberSuccess.shortValue(), numberFailure.shortValue());
+    Long numberFailure = processOrderResults.stream().filter(r -> r == ProcessOrderResult.ERROR).count();
+    Long numberSuccess = processOrderResults.stream().filter(r -> r == ProcessOrderResult.SUCCESS).count();
+    writeMonitor(numberSuccess.shortValue(), numberFailure.shortValue());
+}
+
+enum ProcessOrderResult {
+    SUCCESS, ERROR, NOT_PROCESSED
+}
+
+private ProcessOrderResult processOrder(OrinocoOrder order) {
+    OrinocoEmailConfig config = null;
+    try {
+        config = props.findByOriginSystem(order.getOriginatingSystem());
+        if(config != null) {
+            if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
+                if(order.getStructuredData() != null) {
+                    List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
+                    order.getStructuredData().setListItemInfo(itemInfos);
+                }
+                OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
+                orderRequestBom.setOrder(order);
+                OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
+                if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
+                    oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
+                    return ProcessOrderResult.SUCCESS;
+                } else {
+                    incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
+                    return ProcessOrderResult.ERROR;
+                }
+            } else {
+                return ProcessOrderResult.NOT_PROCESSED;
+            }
+        } else {
+            return ProcessOrderResult.NOT_PROCESSED;
+        }
+    } catch (Exception e) {
+        try {
+            incrementRetryCount(order.getId(), config, e.getMessage());
+        } catch (Exception incE) {
+        }
+        return ProcessOrderResult.ERROR;
     }
+}
+```
 
-    enum ProcessOrderResult {
-        SUCCESS, ERROR, NOT_PROCESSED
-    }
+# 6. Reduce indentation - extract method
 
-    private ProcessOrderResult processOrder(OrinocoOrder order) {
+```java
+private ProcessOrderResult processOrder(OrinocoOrder order) {
         OrinocoEmailConfig config = null;
         try {
             config = props.findByOriginSystem(order.getOriginatingSystem());
             if(config != null) {
-                if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
-                    if(order.getStructuredData() != null) {
-                        List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
-                        order.getStructuredData().setListItemInfo(itemInfos);
-                    }
-                    OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
-                    orderRequestBom.setOrder(order);
-                    OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
-                    if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
-                        oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
-                        return ProcessOrderResult.SUCCESS;
-                    } else {
-                        incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
-                        return ProcessOrderResult.ERROR;
-                    }
-                } else {
-                    return ProcessOrderResult.NOT_PROCESSED;
-                }
+                return processOrderWithConfig(order, config); // Logic extracted
             } else {
                 return ProcessOrderResult.NOT_PROCESSED;
             }
@@ -344,4 +366,54 @@ public void processToBeProcessedOrinocoOrders() {
             return ProcessOrderResult.ERROR;
         }
     }
+
+private ProcessOrderResult processOrderWithConfig(OrinocoOrder order, OrinocoEmailConfig config) {
+        if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
+            if(order.getStructuredData() != null) {
+                List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
+                order.getStructuredData().setListItemInfo(itemInfos);
+            }
+            OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
+            orderRequestBom.setOrder(order);
+            OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
+            if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
+                oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
+                return ProcessOrderResult.SUCCESS;
+            } else {
+                incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
+                return ProcessOrderResult.ERROR;
+            }
+        } else {
+            return ProcessOrderResult.NOT_PROCESSED;
+        }
+    }
+```
+
+# 7. Reduce indentation - extract method again
+
+```java
+private ProcessOrderResult processOrderWithConfig(OrinocoOrder order, OrinocoEmailConfig config) {
+    if(order.getRetryCount() == null || order.getRetryCount() <= config.getMaxCount()) {
+        return getProcessOrderResult(order, config);
+    } else {
+        return ProcessOrderResult.NOT_PROCESSED;
+    }
+}
+
+private ProcessOrderResult processOrderWhenMaxCountNotReached(OrinocoOrder order, OrinocoEmailConfig config) {
+    if(order.getStructuredData() != null) {
+        List<ItemInfo> itemInfos = oroRepo.findItemInfosForOrder(order.getStructuredData().getTeckId());
+        order.getStructuredData().setListItemInfo(itemInfos);
+    }
+    OrinocoOrderRequest orderRequestBom = new OrinocoOrderRequest();
+    orderRequestBom.setOrder(order);
+    OrinocoOrderResponse sendOrderResp = oroOrderService.sendOrder(orderRequestBom);
+    if(sendOrderResp.getAdvice().getStatus() == AdviceStatusEnum.SUCCESS) {
+        oroRepo.setStatus(order.getId(), StatusEnum.PROCESSED);
+        return ProcessOrderResult.SUCCESS;
+    } else {
+        incrementRetryCount(order.getId(), config, sendOrderResp.getAdvice().getMessageText());
+        return ProcessOrderResult.ERROR;
+    }
+}
 ```
