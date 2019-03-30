@@ -279,6 +279,12 @@ TODO: Desing a class or module like a library.
 # Design and use interfaces from consumer POV
 TODO
 
+# Mutability is the new GOTO
+## avoid creating new getters and setters right away
+
+TODO
+example about rowmapper and toParameters
+
 # Code smells
 
 ## Bloaters
