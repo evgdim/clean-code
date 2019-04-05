@@ -276,14 +276,57 @@ TODO example
 
 TODO: Desing a class or module like a library.
 
-# Design and use interfaces from consumer POV
-TODO
+# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+Interfaces
+
+If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
+
+```java
+class SomeService {
+   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
+
+   void someMethod() {
+      this.personService.findById(id); //nothig else from personService is used in this class
+   }
+}
+```
+Multi interface implementation and inheritance is  thing in Java.
+
+```java
+public interface PersonReader {
+   public Person findById(Long id);
+}
+
+public interface PersonPersister {
+   public void save(Person person);
+}
+
+public interface PersonService extends PersonReader, PersonPersister {
+   
+}
+```
+
+Function Arguments
+```diff
+-void checkPersonIdentificationNumber(Person person) {
+-   String identNumber = person.getIdentNumber(); //person has a lot more fields
+-   ...
+-}
++void checkPersonIdentificationNumber(String identNumber) {
++   ...
++}
+```
+
+
+
 
 # Mutability is the new GOTO
 ## avoid creating new getters and setters right away
 
 TODO
 example about rowmapper and toParameters
+
+TODO Law of Demeter
 
 # Code smells
 
