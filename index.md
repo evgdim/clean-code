@@ -268,9 +268,58 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 ```
 ### Caching should be easily turned off
 
-### Separate side effects from business logic
-TODO example
+### Pure functions
 
+1. The function does not chnage anything
+2. The function does not depend on anything that can change
+
+```java
+int doubleIt(int number) {
+   return number * 2;
+}
+```
+
+```java
+int multiplyIt(int number, int factor) {
+   return number * factor;
+}
+```
+
+```java
+int factor = 3;
+int multiplyIt(int number) {
+   return number * factor;
+}
+```
+
+```java
+final int factor = 3;
+int multiplyIt(int number) {
+   return number * factor;
+}
+```
+
+### Separate side effects from business logic
+
+>You get on the train
+>
+>&darr;
+>   
+>The train goes from A to B
+>
+>&darr;
+>
+>You get of the train
+
+> [side effect] Get all of the input from database, rest service, etc.
+>
+>&darr;
+>   
+> [pure functions] Do all of the business logic, calculations, etc.
+>
+>&darr;
+>
+> [side effect] Persists in the database, file, etc.
 
 # API/Module desfing
 
