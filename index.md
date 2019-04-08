@@ -275,6 +275,8 @@ TODO example
 # API/Module desfing
 
 TODO: Desing a class or module like a library.
+System of systems
+visibility default is package
 
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
 Interfaces
@@ -321,7 +323,32 @@ Function Arguments
 
 
 # Mutability is the new GOTO
-## avoid creating new getters and setters right away
+Mutability should be avoided or "pushed" to lower level.
+
+```java
+List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9);
+```
+
+```java
+int total = 0;
+for(int i = 0; i < number.size(); i++) {
+   if(numbers.get(i) % 2 == 0) {
+      total += numbers.get(i) * 2;
+   }
+}
+
+logger.info(total);
+```
+
+```java
+int total = numbers.stream()
+                   .filter(n -> n % 2 == 0)
+                   .mapToInt(n -> n * 2)
+                   .sum();
+```
+
+
+## Avoid generating getters and setters right away
 
 TODO
 example about rowmapper and toParameters
