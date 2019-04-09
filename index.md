@@ -1,13 +1,6 @@
 # <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
-- [Overview](#overview)
-   - [Questions to answer](#questions-to-answer)
-   - [When to reafactor](#when-to-reafactor)
-- [Names](#names)
-   - [Scope](#Scope)
-      - [Variable names should be proportional to their scope](#Variable-names-should-be-proportional-to-their-scope)
-
 # Overview
 
 ## Questions to answer
@@ -22,6 +15,8 @@
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
 
+[Names >](#names)
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 # Names
 
 ## Scope
@@ -125,6 +120,9 @@ Try to prefix names, mesages and descriptions with an issue identifier if the co
 <pre>
 git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
+
+[Functions >](#functions)
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
 # Functions
 
@@ -236,6 +234,9 @@ Fully describe what the function does in it's name.
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
+
+[Side Effects >](#Side-Effects)
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 ## Side Effects
 ### Extract environment (Date-time, properties, current OS)
 
