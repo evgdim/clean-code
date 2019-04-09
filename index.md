@@ -327,6 +327,7 @@ TODO: Desing a class or module like a library.
 System of systems
 visibility default is package
 
+TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
 Interfaces
 
