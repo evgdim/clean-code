@@ -237,6 +237,12 @@ Fully describe what the function does in it's name.
 +Circle makeCircle(Point center, double radius);
 ```
 
+## Return types
+
+```void``` is a code smell.
+
+Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
+
 [Side Effects >](#Side-Effects)
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 ## Side Effects
