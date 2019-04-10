@@ -271,16 +271,142 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 ```
 ### Caching should be easily turned off
 
-### Separate side effects from business logic
-TODO example
+### Pure functions
 
+1. The function does not chnage anything
+2. The function does not depend on anything that can change
+
+```java
+int doubleIt(int number) {
+   return number * 2;
+}
+```
+
+```java
+int multiplyIt(int number, int factor) {
+   return number * factor;
+}
+```
+
+```java
+int factor = 3;
+int multiplyIt(int number) {
+   return number * factor;
+}
+```
+
+```java
+final int factor = 3;
+int multiplyIt(int number) {
+   return number * factor;
+}
+```
+
+### Separate side effects from business logic
+
+>You get on the train
+>
+>&darr;
+>   
+>The train goes from A to B
+>
+>&darr;
+>
+>You get of the train
+
+> [side effect] Get all of the input from database, rest service, etc.
+>
+>&darr;
+>   
+> [pure functions] Do all of the business logic, calculations, etc.
+>
+>&darr;
+>
+> [side effect] Persists in the database, file, etc.
 
 # API/Module desfing
 
 TODO: Desing a class or module like a library.
+System of systems
+visibility default is package
 
-# Design and use interfaces from consumer POV
+TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
+# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+Interfaces
+
+If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
+
+```java
+class SomeService {
+   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
+
+   void someMethod() {
+      this.personService.findById(id); //nothig else from personService is used in this class
+   }
+}
+```
+Multi interface implementation and inheritance is  thing in Java.
+
+```java
+public interface PersonReader {
+   public Person findById(Long id);
+}
+
+public interface PersonPersister {
+   public void save(Person person);
+}
+
+public interface PersonService extends PersonReader, PersonPersister {
+   
+}
+```
+
+Function Arguments
+```diff
+-void checkPersonIdentificationNumber(Person person) {
+-   String identNumber = person.getIdentNumber(); //person has a lot more fields
+-   ...
+-}
++void checkPersonIdentificationNumber(String identNumber) {
++   ...
++}
+```
+
+
+
+
+# Mutability is the new GOTO
+Mutability should be avoided or "pushed" to lower level.
+
+```java
+List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9);
+```
+
+```java
+int total = 0;
+for(int i = 0; i < number.size(); i++) {
+   if(numbers.get(i) % 2 == 0) {
+      total += numbers.get(i) * 2;
+   }
+}
+
+logger.info(total);
+```
+
+```java
+int total = numbers.stream()
+                   .filter(n -> n % 2 == 0)
+                   .mapToInt(n -> n * 2)
+                   .sum();
+```
+
+
+## Avoid generating getters and setters right away
+
 TODO
+example about rowmapper and toParameters
+
+TODO Law of Demeter
 
 # Code smells
 
