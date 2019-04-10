@@ -166,6 +166,8 @@ Don't mix different abstractions in one function:
    }
 ```
 
+TODO: Add example with car direction from https://tedvinke.wordpress.com/2017/11/24/functional-java-by-example-part-2-tell-a-story/
+
 ## One Level of Indentation per Function
 ```java
 public void myFunction(List<Person> people) {
