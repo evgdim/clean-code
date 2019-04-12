@@ -337,6 +337,7 @@ System of systems
 visibility default is package
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
+Create an interface that returns private classes that are not visible
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
 Interfaces
 
