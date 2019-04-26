@@ -15,8 +15,26 @@
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
 
+# Docs
+
+`README.md` or even a folder full of readmes
+
+* Branching strategy (Git Flow / Trunk based development)
+* How to setup a development environmnt
+   * Databse instalation (scripts should be available in the source control)
+   * Mocks of 3th party systems
+* How to deploy to the different environments
+   * Urls, accounts used, etc
+* Tricky parts of the application
+* Conventions used in the project
+   * `Databse table names should be in plural`
+   * `Rest endpoints should be in plural and represent a resource`
+   * `The database scripts should be placed in folder <project root>/databse`
+   
+
 [Names >](#names)
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
 # Names
 
 ## Scope
@@ -330,6 +348,11 @@ int multiplyIt(int number) {
 >
 > [side effect] Persists in the database, file, etc.
 
+# Objects
+## Prefer factory methods when multiple constructors are needed
+TODO
+## Use dependency injection
+TODO
 # API/Module desfing
 
 TODO: Desing a class or module like a library.
