@@ -154,6 +154,7 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 
 ### You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
+### Don't use a `{}` for lambdas!
 
 ## Do one thing
 
@@ -347,6 +348,9 @@ int multiplyIt(int number) {
 >&darr;
 >
 > [side effect] Persists in the database, file, etc.
+
+## Jva Streams best practices
+TODO
 
 # Objects
 ## Prefer factory methods when multiple constructors are needed
