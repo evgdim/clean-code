@@ -362,6 +362,7 @@ TODO
 TODO: Desing a class or module like a library.
 System of systems
 visibility default is package
+https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
 Create an interface that returns private classes that are not visible
