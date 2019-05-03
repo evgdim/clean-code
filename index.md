@@ -367,6 +367,57 @@ https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
 
 # make each class or member as inaccessible as possible
+
+# Minimize mutability
+Classes should be immutable unless there’s a very good reason to make them mutable.
+
+e.g. `String`, `BigInteger` and `BigDecimal`
+
+1. Don’t provide methods that modify the object’s state (known as mutators).
+2. Ensure that the class can’t be extended. e.g. making the class final
+3. Make all fields final. This clearly expresses your intent in a manner that is enforced by the system. 
+4. Make all fields private. This prevents clients from obtaining access to mutable objects referred to by fields and modifying these objects directly.
+5. Ensure exclusive access to any mutable components. If your class has any fields that refer to mutable objects, ensure that clients of the class cannot obtain references to hese objects.
+
+```java
+public final class Complex {
+   private final double re;
+   private final double im;
+
+   public Complex(double re, double im) {
+      this.re = re;
+      this.im = im;
+   }
+   public double realPart() { return re; }
+   public double imaginaryPart() { return im; }
+   public Complex plus(Complex c) { return new Complex(re + c.re, im + c.im); }
+   public Complex minus(Complex c) { return new Complex(re - c.re, im - c.im); }
+   public Complex times(Complex c) { return new Complex(re * c.re - im * c.im, re * c.im + im * c.re); }
+   public Complex dividedBy(Complex c) { 
+      double tmp = c.re * c.re + c.im * c.im;
+      return new Complex((re * c.re + im * c.im) /tmp, (im * c.re - re * c.im) / tmp);
+   }
+   @Override public boolean equals(Object o) {
+   ...
+   }
+   @Override public int hashCode() {
+   ...
+   }
+   @Override public String toString() {
+   ...
+   }
+}
+```
+Immutable objects are inherently thread-safe; they require no synchronization.
+
+#Reuse common immutable objects (use static factories to cache)
+
+```java
+public static final Complex ZERO = new Complex(0, 0);
+public static final Complex ONE = new Complex(1, 0);
+public static final Complex I = new Complex(0, 1);
+```
+
 Create an interface that returns private classes that are not visible
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
 Interfaces
