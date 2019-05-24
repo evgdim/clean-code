@@ -365,6 +365,8 @@ visibility default is package
 https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
+
+# make each class or member as inaccessible as possible
 Create an interface that returns private classes that are not visible
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
 Interfaces
