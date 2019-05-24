@@ -443,6 +443,23 @@ example about rowmapper and toParameters
 
 TODO Law of Demeter
 
+# Premature Optimization Is the Root of All Evil
+
+## Source of bad performance:
+* IO us slower than memory and CPU by a factor of millions
+* Objects that are meant to be created once
+   * Pools (Connection pools, Thread pools)
+   * Factories 
+   * Jackson ObjectMapper
+* Regexes might be slow
+
+
+## Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is. 
+* VisualVM
+* FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
+
+## Don't do something just because you think it's slow. The JVM optimizes a lot under the hood 
+
 # Code smells
 
 ## Bloaters
