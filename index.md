@@ -352,12 +352,63 @@ int multiplyIt(int number) {
 ## Jva Streams best practices
 TODO
 
+# Error Handling
+
+## Use Exceptions Rather Than Return Codes
+
+## Use Unchecked Exceptions
+### Checked Exception violate the Open/Closed Principle
+If you throw a checked exception from a method in your code and the catch is three levels
+above, you must declare that exception in the signature of each method between you and
+the catch. This means that a change at a low level of the software can force signature
+changes on many higher levels.
+
+### Checked exceptions breaks encapsulation
+All functions in the path of a throw must know about details of that low-level exception.
+
+## Provide Context with Exceptions
+```java
+public class PersonNotFoundException extends RuntimeException {
+   private Long searchId; 
+   public PersonNotFoundException(Long searchId, String message) {
+      this.searchId = searchId;
+      super(message);
+   }
+   //getters...
+}
+```
+
+## Don't collect the stacktrace for business exceptions
+```java
+Throwable(String message, Throwable cause, boolean enableSuppression,boolean writableStackTrace)
+```
+```java
+public class SuppressableStacktraceException extends Exception {
+    private boolean suppressStacktrace = false;
+
+    public SuppressableStacktraceException(String message, boolean suppressStacktrace) {
+        super(message, null, suppressStacktrace, !suppressStacktrace);
+        this.suppressStacktrace = suppressStacktrace;
+    }
+
+    @Override
+    public String toString() {
+        if (suppressStacktrace) {
+            return getLocalizedMessage();
+        } else {
+            return super.toString();
+        }
+    }
+}
+```
+TODO vavr Try
+
 # Objects
 ## Prefer factory methods when multiple constructors are needed
 TODO
 ## Use dependency injection
 TODO
-# API/Module desfing
+# API/Module desing
 
 TODO: Desing a class or module like a library.
 System of systems
@@ -365,6 +416,10 @@ visibility default is package
 https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
+
+## Wrap 3th party librabries
+* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
+* Makes it easier to mock out third-party calls when you are testing your own code.
 
 # make each class or member as inaccessible as possible
 Create an interface that returns private classes that are not visible
