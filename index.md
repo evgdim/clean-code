@@ -403,6 +403,24 @@ public class SuppressableStacktraceException extends Exception {
 ```
 TODO vavr Try
 
+
+## Catch or Pass 
+### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
+
+```java
+@ControllerAdvice
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+ 
+    @ExceptionHandler(value ={IllegalArgumentException.class, IllegalStateException.class })
+    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "This should be application specific";
+        return handleExceptionInternal(ex, bodyOfResponse, 
+          new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+}
+```
+
+
 # Objects
 ## Prefer factory methods when multiple constructors are needed
 TODO
