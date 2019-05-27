@@ -442,7 +442,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 ## Prefer factory methods when multiple constructors are needed
 TODO
 ## Use dependency injection
-TODO
+* Testing can be performed using mock objects.
+* Loosely couple architecture.
+* Makes it easier to remove all knowledge of a concrete implementation that a class needs to use.
+
 # API/Module desing
 
 TODO: Desing a class or module like a library.
