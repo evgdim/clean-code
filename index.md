@@ -350,7 +350,24 @@ int multiplyIt(int number) {
 > [side effect] Persists in the database, file, etc.
 
 ## Jva Streams best practices
-TODO
+* Avoid passing streams around, pass collections
+* Don't mutate data in a stream (in peek and forEach)
+* Don't throwing exceptions in streams - use either or Try monad
+* One stream method call per line
+```java
+// BAD CODE:
+strings.stream().filter(s -> s.length() > 2).sorted()
+	.map(s -> s.substring(0, 2)).collect(Collectors.toList());
+```
+```java
+// GOOD CODE:
+strings.stream()
+	.filter(s -> s.length() > 2)
+	.sorted()
+	.map(s -> s.substring(0, 2))
+	.collect(Collectors.toList());
+```
+* Use `IntStream`, `LongStream` and `DoubleStream` when working with primitive types. They are faster (they avoid boxing) and easier to use (they add useful methods like sum)
 
 # Error Handling
 
