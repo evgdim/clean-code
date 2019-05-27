@@ -440,7 +440,26 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 # Objects
 ## Prefer factory methods when multiple constructors are needed
-TODO
+```java
+class Person {
+   private final String name;
+   private Person(String name) {
+      this.name = name;
+   }
+
+   public static Person of(String name) {
+      return new Person(name);
+   }
+}
+```
+* Unlike constructors, factory methods have names.
+* Factory methods are not required to create a new object each time they’re invoked 
+   * caching
+* Factory methods can return an object of any subtype of their return type
+* The class of the returned object, from factory method, can vary from call to call as a function of the input parameters
+   * `EnumSet` factory methods return `RegularEnumSet` (backed by a single long) if the set has less than 64 elements
+   * `EnumSet` factory methods return `JumboEnumSet` (backed by an array of long) if the set has more than 64 elements
+
 ## Use dependency injection
 * Testing can be performed using mock objects.
 * Loosely couple architecture.
