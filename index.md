@@ -542,6 +542,36 @@ Function Arguments
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
+## How to make an immutable class
+```java
+public final class ImmutableStudent { // prevent inheritance
+   private final int id;             // fields are final
+   private final String name;
+   private final Dissertation dissertation;        
+      
+   //fileds are set only in constructor or a factory menthod
+   public ImmutableStudent(int id, String name, Dissertation dissertation) { 
+      this.name = name;
+      this.id = id;
+      this.dissertation = dissertation;
+   }
+   public int getId() { // there are getters but no setters
+      return id;
+   }
+   public String getName() {
+      return name;
+   } 
+   // a copy of referenced objects are created to prevet someone who owns a reference to the object to chnage it
+   public Dissertation getDissertation() { 
+      return dissertation.clone();
+   } 
+   // to mutate an immutable object - copy it
+   public ImmutableStudent withName(String name) { 
+      return new ImmutableStudent(this.id, name, this.dissertation);
+   }
+}
+```
+
 ```java
 List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9);
 ```
