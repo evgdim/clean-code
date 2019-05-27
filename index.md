@@ -489,8 +489,6 @@ System of systems
 visibility default is package
 https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 
-TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
-
 ## Wrap 3th party librabries
 * Minimize your dependencies upon it: You can choose to move to a different library in the future. 
 * Makes it easier to mock out third-party calls when you are testing your own code.
@@ -555,8 +553,6 @@ for(int i = 0; i < number.size(); i++) {
       total += numbers.get(i) * 2;
    }
 }
-
-logger.info(total);
 ```
 
 ```java
@@ -566,6 +562,13 @@ int total = numbers.stream()
                    .sum();
 ```
 
+## Immutable objects are:
+* Easier to reason about - no objects in invalid state
+* Easier to share/cache
+* Thread-safe - no synchronisation needed
+* Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
+
+TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
 
 ## Avoid generating getters and setters right away
 
