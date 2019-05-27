@@ -418,8 +418,25 @@ public class SuppressableStacktraceException extends Exception {
     }
 }
 ```
-TODO vavr Try
+## Vavr Try
+https://www.vavr.io/vavr-docs/
 
+TODO
+
+```java
+// = Success(result) or Failure(exception)
+Try<Integer> divide(Integer dividend, Integer divisor) {
+    return Try.of(() -> dividend / divisor);
+}
+```
+
+```java
+Try<Response> response = Try.of(() -> ...);
+
+Integer chainedResult = response
+      .map(this::actionThatTakesResponseAndReturnsInt)
+      .getOrElse(defaultChainedResult);
+```
 
 ## Catch or Pass 
 ### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
