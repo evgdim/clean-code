@@ -418,10 +418,10 @@ public class SuppressableStacktraceException extends Exception {
     }
 }
 ```
-## Vavr Try
+## Vavr Try and Either
 https://www.vavr.io/vavr-docs/
 
-TODO
+TODO either
 
 ```java
 // = Success(result) or Failure(exception)
