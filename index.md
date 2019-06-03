@@ -139,6 +139,13 @@ Try to prefix names, mesages and descriptions with an issue identifier if the co
 git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
 
+## Naming to general skills mapping:
+* Consistent
+* Organized
+* Self management
+* Responisbility
+* Communicate it with others
+
 [Functions >](#functions)
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
@@ -383,6 +390,8 @@ changes on many higher levels.
 ### Checked exceptions breaks encapsulation
 All functions in the path of a throw must know about details of that low-level exception.
 
+### Checked exceptions does not rollback declaratve transactions!
+
 ## Provide Context with Exceptions
 ```java
 public class PersonNotFoundException extends RuntimeException {
@@ -623,6 +632,10 @@ TODO Law of Demeter
 * FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
 
 ## Don't do something just because you think it's slow. The JVM optimizes a lot under the hood 
+
+# Streams
+
+TODO https://www.youtube.com/watch?v=APUCMSPiNh4 code at 59:30
 
 # Code smells
 
