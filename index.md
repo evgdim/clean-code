@@ -30,7 +30,8 @@
    * `Databse table names should be in plural`
    * `Rest endpoints should be in plural and represent a resource`
    * `The database scripts should be placed in folder <project root>/databse`
-   
+
+Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:54)
 
 [Names >](#names)
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
