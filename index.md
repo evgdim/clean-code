@@ -719,10 +719,6 @@ TODO Law of Demeter
 
 ## Don't do something just because you think it's slow. The JVM optimizes a lot under the hood 
 
-# Streams
-
-TODO https://www.youtube.com/watch?v=APUCMSPiNh4 code at 59:30
-
 # Code smells
 
 ## Bloaters
