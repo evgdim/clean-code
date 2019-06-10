@@ -1,6 +1,91 @@
 # <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
+
+# Task
+
+Get the unique surnames in uppercase of the first 15 book authors that are 50 years old or older.
+
+```
+{
+   books: [
+      {
+         bookName: "Doesn't really matter"
+         author: {
+            age: 45,
+            surname: "SomeSurname"
+         }
+      },
+      ...
+   ]
+}
+```
+
+```java
+List<String> authrNames = books.stream()
+                .map(book -> book.getAuthor())
+                .filter(author -> author.getAge() > 50)
+                .limit(15)
+                .map(Author::getSurname)
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(toList()); 
+```
+
+```java
+List<String> authrNames = books.stream()
+                .map(book -> book.getAuthor())
+                .filter(author -> author.getAge() > 50)
+                .distinct()                                // <=
+                .limit(15)
+                .map(Author::getSurname)
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(toList()); 
+```
+
+```java
+List<Author> authors = new ArrayList<>();
+
+for (Book book : books) {
+   Author author = book.getAuthor(); 
+   if(author.getAge() > 50){
+         authors.add(author);
+         if(authors.size() > 15) 
+            break;
+   }
+}
+
+List<String> result = new ArrayList<>();
+for (Author author : authors) {
+   String name = author.getSurname().toUpperCase();
+   if(result.contains(name)) {
+         result.add(name);
+   }
+}
+```
+
+```java
+List<Author> authors = new ArrayList<>();
+
+for (Book book : books) {
+   Author author = book.getAuthor();
+   if(author.getAge() > 50 && !authors.contains(author)){         // <=
+         authors.add(author);
+         if(authors.size() > 15) 
+            break;
+   }
+}
+
+List<String> result = new ArrayList<>();
+for (Author author : authors) {
+   String name = author.getSurname().toUpperCase();
+   if(result.contains(name)) {
+         result.add(name);
+   }
+}
+```
+
 # Overview
 
 ## Questions to answer
