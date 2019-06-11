@@ -578,6 +578,8 @@ Try<String> tryDivide = devide(1, 5)
         Try<Integer> tryOfInteger = tryDivide.flatMap(TrySample::someFunnctionThatReturnTry);
 ```
 
+TODO Supported by Spring @Transactional???
+
 ## Catch or Pass 
 ### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
 
