@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 
-public class App {
+public class Streams {
     public static void main( String[] args ) {
         List<Book> books = Arrays.asList(
                 new Book("a", new Author("Ivanov", 50)),
