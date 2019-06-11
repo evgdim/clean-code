@@ -1,26 +1,48 @@
 package com.github.evgdim.restest;
 
 import io.vavr.control.Either;
+import io.vavr.control.Try;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
-public class EitherSample {
+public class TrySample {
     public static void main(String[] args) {
-        Either<ArithmeticException, BigDecimal> ok = devide(1, 5);
-        Either<ArithmeticException, BigDecimal> error = devide(1, 0);
 
-        Either<ArithmeticException, BigDecimal> mappedOk = ok.map(result -> result.multiply(BigDecimal.TEN));
-        System.out.println(mappedOk);
+        Try<BigDecimal> error = devide(1, 0);
 
-        Either<ArithmeticException, BigDecimal> mappedError = error.map(result -> result.multiply(BigDecimal.TEN));
-        System.out.println(mappedError);
+        Try<String> tryDivide = devide(1, 5)
+                .onSuccess(TrySample::log)         //separation of concerns
+                .onFailure(TrySample::sendMail)
+                .map(String::valueOf)               //pure functions
+                .map(String::toUpperCase);
+        System.out.println(tryDivide); //Success(0.2)
+
+//        tryDivide.get();        // don't do that
+//        tryDivide.getCause();   // don't do that
+//
+//        tryDivide.toEither();
+
+        Try<Integer> tryOfInteger = tryDivide.flatMap(TrySample::someFunnctionThatReturnTry);
+
     }
 
-    private static Either<ArithmeticException, BigDecimal> devide(int divident, int divisor) {
+    private static Try<Integer> someFunnctionThatReturnTry(String str) {
+        return Try.of(() -> str.length());
+    }
+
+    private static void log(BigDecimal bigDecimal) {
+    }
+
+    private static void sendMail(Throwable bigDecimal) {
+        throw new RuntimeException();
+    }
+
+    private static Try<BigDecimal> devide(int divident, int divisor) {
+        Objects.requireNonNull(divident);
+        Objects.requireNonNull(divisor);
         BigDecimal dividentDecimal = BigDecimal.valueOf(divident);
         BigDecimal divisorDecimal = BigDecimal.valueOf(divisor);
-        return divisor != 0 ?
-                Either.right(dividentDecimal.divide(divisorDecimal)) :
-                Either.left(new ArithmeticException("Devision by zero"));
+        return Try.of(() -> dividentDecimal.divide(divisorDecimal));
     }
 }

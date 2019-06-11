@@ -348,7 +348,14 @@ Fully describe what the function does in it's name.
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
-
+### Check the input parameters
+```java
+BigDecimal devide(int divident, int divisor) {
+   Objects.requireNonNull(divident);
+   Objects.requireNonNull(divisor);
+   ...
+}
+```
 ## Return types
 
 ```void``` is a code smell.
@@ -553,6 +560,22 @@ Try<Response> response = Try.of(() -> ...);
 Integer chainedResult = response
       .map(this::actionThatTakesResponseAndReturnsInt)
       .getOrElse(defaultChainedResult);
+```
+
+```java
+Try<String> tryDivide = devide(1, 5)
+                .onSuccess(TrySample::log)         //separation of concerns
+                .onFailure(TrySample::sendMail)
+                .map(String::valueOf)               //pure functions
+                .map(String::toUpperCase);         // this will be executed only when the Try is a Success else the error is just propagated
+        System.out.println(tryDivide); //Success(0.2)
+
+//        tryDivide.get();        // don't do that
+//        tryDivide.getCause();   // don't do that
+//
+//        tryDivide.toEither();
+        
+        Try<Integer> tryOfInteger = tryDivide.flatMap(TrySample::someFunnctionThatReturnTry);
 ```
 
 ## Catch or Pass 

@@ -1,2 +1,5 @@
 clean-code-samples/.idea/
 clean-code-samples/target/
+clean-code-samples/.settings
+clean-code-samples/.project
+clean-code-samples/.classpath
