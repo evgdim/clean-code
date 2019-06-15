@@ -1,8 +1,8 @@
 # <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
-
-# Task
+---
+# The author's names task
 
 Get the unique surnames in uppercase of the first 15 book authors that are 50 years old or older.
 
@@ -20,30 +20,8 @@ Get the unique surnames in uppercase of the first 15 book authors that are 50 ye
    ]
 }
 ```
-
-```java
-List<String> authrNames = books.stream()
-                .map(book -> book.getAuthor())
-                .filter(author -> author.getAge() > 50)
-                .limit(15)
-                .map(Author::getSurname)
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(toList()); 
-```
-
-```java
-List<String> authrNames = books.stream()
-                .map(book -> book.getAuthor())
-                .filter(author -> author.getAge() > 50)
-                .distinct()                                // <=
-                .limit(15)
-                .map(Author::getSurname)
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(toList()); 
-```
-
+---
+# The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
 
@@ -64,7 +42,33 @@ for (Author author : authors) {
    }
 }
 ```
-
+---
+# The author's names task
+```java
+List<String> authrNames = books.stream()
+                .map(book -> book.getAuthor())
+                .filter(author -> author.getAge() > 50)
+                .limit(15)
+                .map(Author::getSurname)
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(toList()); 
+```
+---
+# The author's names task
+```java
+List<String> authrNames = books.stream()
+                .map(book -> book.getAuthor())
+                .filter(author -> author.getAge() > 50)
+                .distinct()                                // <=
+                .limit(15)
+                .map(Author::getSurname)
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(toList()); 
+```
+---
+# The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
 
@@ -85,7 +89,7 @@ for (Author author : authors) {
    }
 }
 ```
-
+---
 # Overview
 
 ## Questions to answer
@@ -94,12 +98,12 @@ for (Author author : authors) {
 * Is my code easy to reason?
 * Is my application easy to deploy?
 * How easy is to find bugs and chnage functionality?
-
+---
 ## When to reafactor
 1. Right after the code is working and the unit tests are done
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
-
+---
 # Docs
 
 `README.md` or even a folder full of readmes
@@ -117,12 +121,9 @@ for (Author author : authors) {
    * `The database scripts should be placed in folder <project root>/databse`
 
 Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:54)
-
-[Names >](#names)
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-
+---
 # Names
-
+---
 ## Scope
 ### Variable names should be proportional to their scope 
 ```java
@@ -139,7 +140,7 @@ for(int i = 0; i < 10; i++) {
 ```java
 .map(l -> l.getParent())
 ```
-
+---
 ## Use Intention-Revealing Names
 
 ```diff
@@ -151,14 +152,14 @@ for(int i = 0; i < 10; i++) {
 - List<Person> listOfPeople;
 + List<Person> owners;
 ```
-
+---
 ## Make Meaningful Distinctions
 
 ```diff
 - void copyChars(char a1[], char a2[]) {
 + void copyChars(char source[],char destination[]) {
 ```
-
+---
 ## Use Searchable Names
 
 * Prefer long descriptive names over abbreviations
@@ -172,7 +173,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 - private long elpsTime;
 + private long elapsedTimeInMilliseconds;
 ```
-
+---
 ## Avoid Mental Mapping
 
 ```diff
@@ -200,7 +201,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 +}
 
 ```
-
+---
 ## Extract variable when it makes the code more readable 
 ```diff
 -if(context.getAttribute("TEST_MODE")) {...}
