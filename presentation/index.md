@@ -91,7 +91,6 @@ for (Author author : authors) {
 ```
 ---
 # Overview
-
 ## Questions to answer
 * Is my code easy to read?
 * Is my code easy to unit test?
@@ -99,13 +98,13 @@ for (Author author : authors) {
 * Is my application easy to deploy?
 * How easy is to find bugs and chnage functionality?
 ---
+# Overview
 ## When to reafactor
 1. Right after the code is working and the unit tests are done
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
 ---
 # Docs
-
 `README.md` or even a folder full of readmes
 
 * Branching strategy (Git Flow / Trunk based development)
@@ -124,15 +123,18 @@ Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:
 ---
 # Names
 ---
+# Names
 ## Scope
-### Variable names should be proportional to their scope 
+Variable names should be proportional to their scope 
+
 ```java
 for(int i = 0; i < 10; i++) {
    ...
 }
 ```
-
-### Avoid single letter variables 
+---
+# Names
+Avoid single letter variables 
    exceptions: lambdas and very short methods
    
    Avoid letters “l” and “O” as a variable names
@@ -141,6 +143,7 @@ for(int i = 0; i < 10; i++) {
 .map(l -> l.getParent())
 ```
 ---
+# Names
 ## Use Intention-Revealing Names
 
 ```diff
@@ -153,6 +156,7 @@ for(int i = 0; i < 10; i++) {
 + List<Person> owners;
 ```
 ---
+# Names
 ## Make Meaningful Distinctions
 
 ```diff
@@ -160,6 +164,7 @@ for(int i = 0; i < 10; i++) {
 + void copyChars(char source[],char destination[]) {
 ```
 ---
+# Names
 ## Use Searchable Names
 
 * Prefer long descriptive names over abbreviations
@@ -174,6 +179,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 + private long elapsedTimeInMilliseconds;
 ```
 ---
+# Names
 ## Avoid Mental Mapping
 
 ```diff
@@ -202,6 +208,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 
 ```
 ---
+# Names
 ## Extract variable when it makes the code more readable 
 ```diff
 -if(context.getAttribute("TEST_MODE")) {...}
@@ -212,12 +219,18 @@ Stick to expressions when they could be read as a sentence
 ```java
 if(type.startsWith("BASIC_")) {...}
 ```
-
+---
+# Names
 ## Avoid member prefixes
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
+---
+# Names
 ## Class names
+TODO
 
+---
+# Names
 ## Branch names, commit mesages, PR descriptions, etc
 
 Try to prefix names, mesages and descriptions with an issue identifier if the code change is related.
@@ -226,6 +239,8 @@ Try to prefix names, mesages and descriptions with an issue identifier if the co
 git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
 
+---
+# Names
 ## Naming to general skills mapping:
 * Consistent
 * Organized
@@ -233,29 +248,33 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 * Responisbility
 * Communicate it with others
 
-[Functions >](#functions)
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-
+---
 # Functions
 
+---
+# Functions
 ## Small
 
-### ~~Function should fit on the screen.~~
+~~Function should fit on the screen.~~
 <img src="retro_computer.png" alt="drawing" width="200"/>
 
-### ***Function has the right size when you cannot extract anything more from it as a function.***
+***Function has the right size when you cannot extract anything more from it as a function.***
 
+**Refactoring Demo =>**
 
-### You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
+You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
-### Don't use a `{}` for lambdas!
+Don't use a `{}` for lambdas!
 
+---
+# Functions
 ## Do one thing
 
 **FUNCTIONS SHOULD DO ONE THING. THEY SHOULD DO IT WELL.
 THEY SHOULD DO IT ONLY.**
 
-
+---
+# Functions
 ## One Level of Abstraction per Function
 
 Don't mix different abstractions in one function:
@@ -278,9 +297,12 @@ Don't mix different abstractions in one function:
       return message.toString();
    }
 ```
-
+---
+# Functions
 TODO: Add example with car direction from https://tedvinke.wordpress.com/2017/11/24/functional-java-by-example-part-2-tell-a-story/
 
+---
+# Functions
 ## One Level of Indentation per Function
 ```java
 public void myFunction(List<Person> people) {
@@ -305,7 +327,8 @@ public void myFunction(List<Person> people) {
    }
 }
 ```
-
+---
+# Functions
 ## Reading Code from Top to Bottom: The Stepdown Rule
 ```java
 if (null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
@@ -328,10 +351,13 @@ boolean isStatusError(Response response) {
    return null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
 }
 ```
-
+---
+# Functions
 ## Use Descriptive Names
 Fully describe what the function does in it's name. 
 
+---
+# Functions
 ## Function Arguments
 
 ### Good
@@ -341,15 +367,19 @@ Fully describe what the function does in it's name.
 * Three arguments - triadic
 ### Bad
 
-### Avoid output argumnets
-### Try to keep the arguments on the same level of abstraction as the function
-### Avoid boolean parameters - this implies that the function does more than one thing
-### Consider wrapping some of the function arguments in a class when appropriate
+---
+# Functions
+* Avoid output argumnets
+* Try to keep the arguments on the same level of abstraction as the function
+* Avoid boolean parameters - this implies that the function does more than one thing
+* Consider wrapping some of the function arguments in a class when appropriate
 ```diff
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
-### Check the input parameters
+---
+# Functions
+## Check the input parameters - fail as fast as possible
 ```java
 BigDecimal devide(int divident, int divisor) {
    Objects.requireNonNull(divident);
@@ -357,16 +387,40 @@ BigDecimal devide(int divident, int divisor) {
    ...
 }
 ```
+---
+# Functions
 ## Return types
 
 ```void``` is a code smell.
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
-[Side Effects >](#Side-Effects)
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-## Side Effects
-### Extract environment (Date-time, properties, current OS)
+---
+# Functions
+## Don't return null
+Use Optional to express that the function can return null value
+
+```java
+Optional<Person> findByName(String name) {
+   ...
+}
+```
+
+---
+# Functions
+## Functions either return the value that they are mean to produce or throw an error
+## void functions either complete successfully or thrw an error
+
+## Don't return NULL to "express" that something went wrong.
+## Don't return a "message" to tell if the function has complete successfully or something went wrong.
+
+---
+
+# Side Effects
+
+---
+# Side Effects
+## Extract environment (Date-time, properties, current OS)
 
 ```java
 int getDaysToNewYear() {
@@ -382,6 +436,8 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
+---
+# Side Effects
 ```java
 int getDaysToNewYear(LocalDate today) {
    LocalDate newYearsDay = LocalDate.of(today.getYear(), Month.DECEMBER, 31);
@@ -395,9 +451,16 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
    assertEquals(2, getDaysToNewYear(LocalDate.of(2019, Month.DECEMBER, 29)));
 }
 ```
-### Caching should be easily turned off
 
-### Pure functions
+---
+# Side Effects
+## Caching should be easily turned off
+
+---
+
+---
+# Side Effects
+## Pure functions
 
 1. The function does not chnage anything
 2. The function does not depend on anything that can change
@@ -420,15 +483,9 @@ int multiplyIt(int number) {
    return number * factor;
 }
 ```
-
-```java
-final int factor = 3;
-int multiplyIt(int number) {
-   return number * factor;
-}
-```
-
-### Separate side effects from business logic
+---
+# Side Effects
+## Separate side effects from business logic
 
 >You get on the train
 >
@@ -438,7 +495,7 @@ int multiplyIt(int number) {
 >
 >&darr;
 >
->You get of the train
+>You get off the train
 
 > [side effect] Get all of the input from database, rest service, etc.
 >
@@ -450,6 +507,8 @@ int multiplyIt(int number) {
 >
 > [side effect] Persists in the database, file, etc.
 
+---
+# Side Effects
 ## Jva Streams best practices
 * Avoid passing streams around, pass collections
 * Don't mutate data in a stream (in peek and forEach)
@@ -469,7 +528,7 @@ strings.stream()
 	.collect(Collectors.toList());
 ```
 * Use `IntStream`, `LongStream` and `DoubleStream` when working with primitive types. They are faster (they avoid boxing) and easier to use (they add useful methods like sum)
-
+---
 # Error Handling
 
 ## Use Exceptions Rather Than Return Codes
