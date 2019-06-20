@@ -738,7 +738,10 @@ Function Arguments
 +}
 ```
 
-
+---
+# SOLID
+TODO
+---
 
 
 # Mutability is the new GOTO
