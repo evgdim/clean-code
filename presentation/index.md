@@ -698,6 +698,7 @@ https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
 # make each class or member as inaccessible as possible
 Create an interface that returns private classes that are not visible
 # Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+## The I in SOLID
 Interfaces
 
 If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
