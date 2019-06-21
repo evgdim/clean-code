@@ -684,6 +684,45 @@ class Person {
 * Loosely couple architecture.
 * Makes it easier to remove all knowledge of a concrete implementation that a class needs to use.
 
+## Avoid multiple variables/fields depending on each other(Data Clumps)
+## Prefer computation over duplicated data
+
+```java
+class Account {
+   Status status; // [Active, Inactive, Locked]
+   List<Lock> locks; 
+   // getter setter
+}
+```
+
+```java
+account.getLocks().add(new Lock("Case 123"));
+account.setStatus(Locked);
+```
+
+
+```java
+account.getLocks().remove(lockToRemove);
+if(accounts.getLocks().isEmpty()) {
+   account.setStatus(Active);
+}
+```
+
+Instead
+
+```java
+class Account {
+   Status status; // [Active, Inactive, Locked]
+   List<Lock> locks; 
+   // No getter setter, addLock(Lock), removeLock(Lock)
+
+   Status getStatus() {
+      if(!this.locks.isEmpty()) return Status.Locked;
+      return this.status;
+   }
+}
+```
+
 # API/Module desing
 
 TODO: Desing a class or module like a library.
