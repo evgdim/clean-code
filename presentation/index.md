@@ -99,6 +99,24 @@ for (Author author : authors) {
 * How easy is to find bugs and chnage functionality?
 ---
 # Overview
+
+## The start defines the end
+
+If the foundation is weak the rest cannot be solid.
+```
+   *********
+    ***
+      **
+      *
+```
+
+Broken window principal.
+```
+   **********
+   **********
+   **********
+   **********
+```
 ## When to reafactor
 1. Right after the code is working and the unit tests are done
 2. In the scope of a rlatevly big chnage
@@ -122,6 +140,19 @@ for (Author author : authors) {
 Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:54)
 ---
 # Names
+
+---
+# Names
+
+## True or False ?
+---
+# Names
+
+## Names provide context
+
+```java
+boolean isOperationApproved = true;
+```
 ---
 # Names
 ## Scope
@@ -247,6 +278,31 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 * Self management
 * Responisbility
 * Communicate it with others
+
+
+---
+# Variabls
+---
+
+---
+# Variabls
+# Use the right type
+
+* Strings (a.k.a infinite number of possible values) are not for state  - use enums
+```java
+   String status = "Active"; // NO
+```
+TODO Limit the state representations
+
+* Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
+```java
+   Map<String, Object> person = new HashMap<>();
+   person.put("firstName", "Michael");
+   person.put("lastName", "Jordan");
+   return person;
+```
+
+---
 
 ---
 # Functions
@@ -722,7 +778,7 @@ class Account {
    }
 }
 ```
-
+https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
 # API/Module desing
 
 TODO: Desing a class or module like a library.
@@ -844,7 +900,7 @@ int total = numbers.stream()
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
-
+TODO Limit the state representations (String -> Enum) https://www.youtube.com/watch?v=-lVVfxsRjcY (around 25:00)
 ## Avoid generating getters and setters right away
 
 TODO
