@@ -410,7 +410,7 @@ public final class Complex {
 ```
 Immutable objects are inherently thread-safe; they require no synchronization.
 
-#Reuse common immutable objects (use static factories to cache)
+## Reuse common immutable objects (use static factories to cache)
 
 ```java
 public static final Complex ZERO = new Complex(0, 0);
@@ -495,6 +495,26 @@ TODO
 example about rowmapper and toParameters
 
 TODO Law of Demeter
+
+# Functional style of programing
+
+## Optional
+* Never Assign Null to an Optional Variable
+```java
+Optional<Cart> emptyCart = null; //NO
+Optional<Cart> emptyCart = Optional.empty(); //YES
+```
+* Avoid calling `.get()` directly, but if you do, make sure that the value is present
+```java
+if (cart.isPresent()) {
+    Cart myCart = cart.get();
+    ... // do something with "myCart"
+} else {
+    ... // do something that doesn't call cart.get()
+}
+```
+## Streams
+## Try and Either
 
 # Code smells
 
