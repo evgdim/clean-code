@@ -854,6 +854,19 @@ example about rowmapper and toParameters
 ---
 # Law of Demeter
 A module should not know about the innards of the objects it manipulates.
+A method f of a class C should only call the methods of these:
+* C
+* An object created by f
+* An object passed as an argument to f
+* An object held in an instance variable of C
+
+The method should not invoke methods on objects that are returned by any of the
+allowed functions. In other words, talk to friends, not to strangers.
+
+This is a violation:
+```java
+final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath();
+```
 TODO
 
 ---
