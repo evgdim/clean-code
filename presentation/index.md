@@ -778,68 +778,14 @@ class Account {
    }
 }
 ```
-https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
-# API/Module desing
-
-TODO: Desing a class or module like a library.
-System of systems
-visibility default is package
-https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
-
-## Wrap 3th party librabries
-* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
-* Makes it easier to mock out third-party calls when you are testing your own code.
-
-# make each class or member as inaccessible as possible
-Create an interface that returns private classes that are not visible
-# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
-## The I in SOLID
-Interfaces
-
-If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
-
-```java
-class SomeService {
-   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
-
-   void someMethod() {
-      this.personService.findById(id); //nothig else from personService is used in this class
-   }
-}
-```
-Multi interface implementation and inheritance is  thing in Java.
-
-```java
-public interface PersonReader {
-   public Person findById(Long id);
-}
-
-public interface PersonPersister {
-   public void save(Person person);
-}
-
-public interface PersonService extends PersonReader, PersonPersister {
-   
-}
-```
-
-Function Arguments
-```diff
--void checkPersonIdentificationNumber(Person person) {
--   String identNumber = person.getIdentNumber(); //person has a lot more fields
--   ...
--}
-+void checkPersonIdentificationNumber(String identNumber) {
-+   ...
-+}
-```
 
 ---
-# SOLID
-TODO
+## Objects vs Data structures
+Objects hide
+their data behind abstractions and expose functions that operate on that data. Data structure
+expose their data and have no meaningful functions.
+
 ---
-
-
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
@@ -905,8 +851,73 @@ TODO Limit the state representations (String -> Enum) https://www.youtube.com/wa
 
 TODO
 example about rowmapper and toParameters
+---
+# Law of Demeter
+A module should not know about the innards of the objects it manipulates.
+TODO
 
-TODO Law of Demeter
+---
+
+https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
+# API/Module desing
+
+TODO: Desing a class or module like a library.
+System of systems
+visibility default is package
+https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
+
+## Wrap 3th party librabries
+* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
+* Makes it easier to mock out third-party calls when you are testing your own code.
+
+# make each class or member as inaccessible as possible
+Create an interface that returns private classes that are not visible
+# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+## The I in SOLID
+Interfaces
+
+If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
+
+```java
+class SomeService {
+   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
+
+   void someMethod() {
+      this.personService.findById(id); //nothig else from personService is used in this class
+   }
+}
+```
+Multi interface implementation and inheritance is  thing in Java.
+
+```java
+public interface PersonReader {
+   public Person findById(Long id);
+}
+
+public interface PersonPersister {
+   public void save(Person person);
+}
+
+public interface PersonService extends PersonReader, PersonPersister {
+   
+}
+```
+
+Function Arguments
+```diff
+-void checkPersonIdentificationNumber(Person person) {
+-   String identNumber = person.getIdentNumber(); //person has a lot more fields
+-   ...
+-}
++void checkPersonIdentificationNumber(String identNumber) {
++   ...
++}
+```
+
+---
+# SOLID
+TODO
+---
 
 # Premature Optimization Is the Root of All Evil
 
