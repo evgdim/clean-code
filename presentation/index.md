@@ -863,11 +863,45 @@ A method f of a class C should only call the methods of these:
 The method should not invoke methods on objects that are returned by any of the
 allowed functions. In other words, talk to friends, not to strangers.
 
-This is a violation:
+OK (TODO chnage names)
 ```java
-final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath();
+public class LawOfDemeter {
+   private Topping cheeseTopping;
+
+   public void doSomethingWithPizza(Pizza pizza) {
+      // (1) it's okay to call our own methods
+      doSomething();
+      
+      // (2) it's okay to call methods on objects passed in to our method
+      int price = pizza.getPrice();
+      
+      // (3) it's okay to call methods on any objects we create
+      cheeseTopping = new CheeseTopping();
+      float weight = cheeseTopping.getWeightUsed();
+      
+      // (4) any directly held component objects
+      Foo foo = new Foo();
+      foo.doBar();
+   }
+
+   private void doSomething()
+   {
+      // do something here ...
+   }
+}
 ```
-TODO
+
+NOT OK
+```java
+public class LawOfDemeter {
+   public boolean isInRiskArea(Person person) {
+      String neighborhood = person.getAddress().getNeighborhood(); 
+      if(riskNeighborhoods.contains(neighborhood)) {
+         ...
+      }
+   }
+}
+```
 
 ---
 
