@@ -281,11 +281,11 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 
 
 ---
-# Variabls
+# Variables
 ---
 
 ---
-# Variabls
+# Variables
 # Use the right type
 
 * Strings (a.k.a infinite number of possible values) are not for state  - use enums
@@ -1011,7 +1011,7 @@ A dispensable is something pointless and unneeded whose absence would make the c
 1. Comments
 2. **Duplicate Code**
 3. Lazy Class
-4. Data Class
+4. **Data Class**
 5. Dead Code
 6. **Speculative Generality**
 
