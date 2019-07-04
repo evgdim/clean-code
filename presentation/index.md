@@ -963,6 +963,172 @@ Function Arguments
 
 ---
 # SOLID
+---
+# SOLID
+## S — Single responsibility principle
+
+A module or class should have responsibility over a single part of the functionality provided by the software.
+A class or module should have one, and only one, reason to be changed.
+
+```
+class User 
+{
+    void CreatePost(Database db, string postMessage)
+    {
+        try
+        {
+            db.Add(postMessage);
+        }
+        catch (Exception ex)
+        {
+            db.LogError("An error occured: ", ex.ToString());
+            File.WriteAllText("\LocalErrors.txt", ex.ToString());
+        }
+    }
+}
+```
+* create a new post
+* log an error in the database
+* and log an error in a local file
+
+---
+# SOLID
+## S — Single responsibility principle
+```
+class Post {
+    private ErrorLogger errorLogger = new ErrorLogger();
+    void CreatePost(Database db, string postMessage) {
+        try {
+            db.Add(postMessage);
+        }
+        catch (Exception ex) {
+            errorLogger.log(ex.ToString())
+        }
+    }
+}
+
+class ErrorLogger {
+    void log(string error) {
+      db.LogError("An error occured: ", error);
+      File.WriteAllText("\LocalErrors.txt", error);
+    }
+}
+```
+two classes that each has one responsibility:
+* to create a post 
+* to log an error
+---
+# SOLID
+## O — Open/closed principle
+
+software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
+
+```
+class Post {
+    void CreatePost(Database db, string postMessage) {
+        if (postMessage.StartsWith("#")) {
+            db.AddAsTag(postMessage);
+        } else {
+            db.Add(postMessage);
+        }
+        // what if post starts with "@" or "$"
+    }
+}
+```
+---
+# SOLID
+## O — Open/closed principle
+```
+class Post {
+    void CreatePost(Database db, string postMessage) {
+        db.Add(postMessage);
+    }
+}
+
+class TagPost : Post {
+    override void CreatePost(Database db, string postMessage) {
+        db.AddAsTag(postMessage);
+    }
+}
+
+// The evaluation of the first character ‘#’ will now be handled elsewhere 
+// If "@" posts have to be added - this will be done with another class without chnaging Post
+```
+---
+# SOLID
+## L — Liskov substitution principle
+
+Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
+
+```
+class Post{
+    void CreatePost(Database db, string postMessage) {
+        db.Add(postMessage);
+    }
+}
+
+class TagPost : Post{
+    override void CreatePost(Database db, string postMessage) {
+        db.AddAsTag(postMessage);
+    }
+}
+
+class MentionPost : Post {
+    void CreateMentionPost(Database db, string postMessage) {
+        string user = postMessage.parseUser();
+
+        db.NotifyUser(user);
+        db.OverrideExistingMention(user, postMessage);
+        base.CreatePost(db, postMessage);
+    }
+}
+
+class PostHandler {
+    private database = new Database();
+
+    void HandleNewPosts() {
+        List<string> newPosts = database.getUnhandledPostsMessages();
+
+        foreach (string postMessage in newPosts) {
+            Post post;
+            if (postMessage.StartsWith("#")) {
+                post = new TagPost();
+            }
+            else if (postMessage.StartsWith("@")) {
+                post = new MentionPost();
+            }
+            else {
+                post = new Post();
+            }
+            post.CreatePost(database, postMessage);
+        }
+    }
+}
+```
+---
+```
+class MentionPost : Post
+{
+    override void CreatePost(Database db, string postMessage) {
+        string user = postMessage.parseUser();
+
+        NotifyUser(user);
+        OverrideExistingMention(user, postMessage)
+        base.CreatePost(db, postMessage);
+    }
+
+    private void NotifyUser(string user) {
+        db.NotifyUser(user);
+    }
+
+    private void OverrideExistingMention(string user, string postMessage) {
+        db.OverrideExistingMention(_user, postMessage);
+    }
+}
+```
+---
+# SOLID
+## D - Dependency inversion principle
 TODO
 ---
 
@@ -1029,3 +1195,4 @@ All the smells in this group contribute to excessive coupling between classes or
 
 1. Clean Code by Uncle Bob Martin
 2. https://sourcemaking.com/refactoring/smells
+3. https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
