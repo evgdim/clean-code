@@ -1,7 +1,7 @@
 # <center>The only way to go fast is to go well</center>
 <center>Evgeni Dimitrov</center>
 
----
+
 # The author's names task
 
 Get the unique surnames in uppercase of the first 15 book authors that are 50 years old or older.
@@ -20,7 +20,7 @@ Get the unique surnames in uppercase of the first 15 book authors that are 50 ye
    ]
 }
 ```
----
+
 # The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
@@ -42,7 +42,7 @@ for (Author author : authors) {
    }
 }
 ```
----
+
 # The author's names task
 ```java
 List<String> authrNames = books.stream()
@@ -54,7 +54,7 @@ List<String> authrNames = books.stream()
                 .distinct()
                 .collect(toList()); 
 ```
----
+
 # The author's names task
 ```java
 List<String> authrNames = books.stream()
@@ -67,7 +67,7 @@ List<String> authrNames = books.stream()
                 .distinct()
                 .collect(toList()); 
 ```
----
+
 # The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
@@ -89,15 +89,15 @@ for (Author author : authors) {
    }
 }
 ```
----
+
 # Overview
 ## Questions to answer
-* Is my code easy to read?
-* Is my code easy to unit test?
-* Is my code easy to reason?
-* Is my application easy to deploy?
-* How easy is to find bugs and chnage functionality?
----
+* Is code easy to read?
+* Is code easy to unit test?
+* Is code easy to reason?
+* Is application easy to deploy?
+* Is it easy to find bugs and chnage functionality?
+
 # Overview
 
 ## The start defines the end
@@ -121,7 +121,7 @@ Broken window principal.
 1. Right after the code is working and the unit tests are done
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
----
+
 # Docs
 `README.md` or even a folder full of readmes
 
@@ -138,14 +138,14 @@ Broken window principal.
    * `The database scripts should be placed in folder <project root>/databse`
 
 Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:54)
----
+
 # Names
 
----
+
 # Names
 
 ## True or False ?
----
+
 # Names
 
 ## Names provide context
@@ -153,7 +153,7 @@ Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:
 ```java
 boolean isOperationApproved = true;
 ```
----
+
 # Names
 ## Scope
 Variable names should be proportional to their scope 
@@ -163,7 +163,7 @@ for(int i = 0; i < 10; i++) {
    ...
 }
 ```
----
+
 # Names
 Avoid single letter variables 
    exceptions: lambdas and very short methods
@@ -173,7 +173,7 @@ Avoid single letter variables
 ```java
 .map(l -> l.getParent())
 ```
----
+
 # Names
 ## Use Intention-Revealing Names
 
@@ -186,7 +186,7 @@ Avoid single letter variables
 - List<Person> listOfPeople;
 + List<Person> owners;
 ```
----
+
 # Names
 ## Make Meaningful Distinctions
 
@@ -194,7 +194,7 @@ Avoid single letter variables
 - void copyChars(char a1[], char a2[]) {
 + void copyChars(char source[],char destination[]) {
 ```
----
+
 # Names
 ## Use Searchable Names
 
@@ -209,7 +209,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 - private long elpsTime;
 + private long elapsedTimeInMilliseconds;
 ```
----
+
 # Names
 ## Avoid Mental Mapping
 
@@ -238,7 +238,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 +}
 
 ```
----
+
 # Names
 ## Extract variable when it makes the code more readable 
 ```diff
@@ -250,17 +250,17 @@ Stick to expressions when they could be read as a sentence
 ```java
 if(type.startsWith("BASIC_")) {...}
 ```
----
+
 # Names
 ## Avoid member prefixes
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
----
+
 # Names
 ## Class names
 TODO
 
----
+
 # Names
 ## Branch names, commit mesages, PR descriptions, etc
 
@@ -270,7 +270,7 @@ Try to prefix names, mesages and descriptions with an issue identifier if the co
 git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
 
----
+
 # Names
 ## Naming to general skills mapping:
 * Consistent
@@ -280,11 +280,11 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 * Communicate it with others
 
 
----
-# Variables
----
 
----
+# Variables
+
+
+
 # Variables
 # Use the right type
 
@@ -302,12 +302,12 @@ TODO Limit the state representations
    return person;
 ```
 
----
 
----
+
+
 # Functions
 
----
+
 # Functions
 ## Small
 
@@ -322,14 +322,14 @@ You should be able to explain what a function does in no more than 20 words with
 
 Don't use a `{}` for lambdas!
 
----
+
 # Functions
 ## Do one thing
 
 **FUNCTIONS SHOULD DO ONE THING. THEY SHOULD DO IT WELL.
 THEY SHOULD DO IT ONLY.**
 
----
+
 # Functions
 ## One Level of Abstraction per Function
 
@@ -353,11 +353,11 @@ Don't mix different abstractions in one function:
       return message.toString();
    }
 ```
----
+
 # Functions
 TODO: Add example with car direction from https://tedvinke.wordpress.com/2017/11/24/functional-java-by-example-part-2-tell-a-story/
 
----
+
 # Functions
 ## One Level of Indentation per Function
 ```java
@@ -383,7 +383,7 @@ public void myFunction(List<Person> people) {
    }
 }
 ```
----
+
 # Functions
 ## Reading Code from Top to Bottom: The Stepdown Rule
 ```java
@@ -407,12 +407,12 @@ boolean isStatusError(Response response) {
    return null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
 }
 ```
----
+
 # Functions
 ## Use Descriptive Names
 Fully describe what the function does in it's name. 
 
----
+
 # Functions
 ## Function Arguments
 
@@ -423,7 +423,7 @@ Fully describe what the function does in it's name.
 * Three arguments - triadic
 ### Bad
 
----
+
 # Functions
 * Avoid output argumnets
 * Try to keep the arguments on the same level of abstraction as the function
@@ -433,7 +433,7 @@ Fully describe what the function does in it's name.
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
----
+
 # Functions
 ## Check the input parameters - fail as fast as possible
 ```java
@@ -443,7 +443,7 @@ BigDecimal devide(int divident, int divisor) {
    ...
 }
 ```
----
+
 # Functions
 ## Return types
 
@@ -451,7 +451,7 @@ BigDecimal devide(int divident, int divisor) {
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
----
+
 # Functions
 ## Don't return null
 Use Optional to express that the function can return null value
@@ -462,7 +462,7 @@ Optional<Person> findByName(String name) {
 }
 ```
 
----
+
 # Functions
 ## Functions either return the value that they are mean to produce or throw an error
 ## void functions either complete successfully or thrw an error
@@ -470,11 +470,11 @@ Optional<Person> findByName(String name) {
 ## Don't return NULL to "express" that something went wrong.
 ## Don't return a "message" to tell if the function has complete successfully or something went wrong.
 
----
+
 
 # Side Effects
 
----
+
 # Side Effects
 ## Extract environment (Date-time, properties, current OS)
 
@@ -492,7 +492,7 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
----
+
 # Side Effects
 ```java
 int getDaysToNewYear(LocalDate today) {
@@ -508,13 +508,13 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
----
+
 # Side Effects
 ## Caching should be easily turned off
 
----
 
----
+
+
 # Side Effects
 ## Pure functions
 
@@ -539,7 +539,7 @@ int multiplyIt(int number) {
    return number * factor;
 }
 ```
----
+
 # Side Effects
 ## Separate side effects from business logic
 
@@ -563,7 +563,7 @@ int multiplyIt(int number) {
 >
 > [side effect] Persists in the database, file, etc.
 
----
+
 # Side Effects
 ## Jva Streams best practices
 * Avoid passing streams around, pass collections
@@ -584,7 +584,7 @@ strings.stream()
 	.collect(Collectors.toList());
 ```
 * Use `IntStream`, `LongStream` and `DoubleStream` when working with primitive types. They are faster (they avoid boxing) and easier to use (they add useful methods like sum)
----
+
 # Error Handling
 
 ## Use Exceptions Rather Than Return Codes
@@ -779,13 +779,13 @@ class Account {
 }
 ```
 
----
+
 ## Objects vs Data structures
 Objects hide
 their data behind abstractions and expose functions that operate on that data. Data structure
 expose their data and have no meaningful functions.
 
----
+
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
@@ -851,7 +851,7 @@ TODO Limit the state representations (String -> Enum) https://www.youtube.com/wa
 
 TODO
 example about rowmapper and toParameters
----
+
 # Law of Demeter
 A module should not know about the innards of the objects it manipulates.
 A method f of a class C should only call the methods of these:
@@ -903,7 +903,7 @@ public class LawOfDemeter {
 }
 ```
 
----
+
 
 https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
 # API/Module desing
@@ -961,9 +961,9 @@ Function Arguments
 +}
 ```
 
----
+
 # SOLID
----
+
 # SOLID
 ## S — Single responsibility principle
 
@@ -991,7 +991,7 @@ class User
 * log an error in the database
 * and log an error in a local file
 
----
+
 # SOLID
 ## S — Single responsibility principle
 ```
@@ -1017,7 +1017,7 @@ class ErrorLogger {
 two classes that each has one responsibility:
 * to create a post 
 * to log an error
----
+
 # SOLID
 ## O — Open/closed principle
 
@@ -1035,7 +1035,7 @@ class Post {
     }
 }
 ```
----
+
 # SOLID
 ## O — Open/closed principle
 ```
@@ -1054,7 +1054,7 @@ class TagPost : Post {
 // The evaluation of the first character ‘#’ will now be handled elsewhere 
 // If "@" posts have to be added - this will be done with another class without chnaging Post
 ```
----
+
 # SOLID
 ## L — Liskov substitution principle
 
@@ -1105,7 +1105,7 @@ class PostHandler {
     }
 }
 ```
----
+
 ```
 class MentionPost : Post
 {
@@ -1126,11 +1126,11 @@ class MentionPost : Post
     }
 }
 ```
----
+
 # SOLID
 ## D - Dependency inversion principle
 TODO
----
+
 
 # Premature Optimization Is the Root of All Evil
 
