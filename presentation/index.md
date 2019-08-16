@@ -281,11 +281,11 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 
 
 ---
-# Variabls
+# Variables
 ---
 
 ---
-# Variabls
+# Variables
 # Use the right type
 
 * Strings (a.k.a infinite number of possible values) are not for state  - use enums
@@ -694,7 +694,7 @@ Try<String> tryDivide = devide(1, 5)
         Try<Integer> tryOfInteger = tryDivide.flatMap(TrySample::someFunnctionThatReturnTry);
 ```
 
-TODO Supported by Spring @Transactional???
+`Try` will be supported by Spring declarative transactions since version 5.2 - https://github.com/spring-projects/spring-framework/issues/20361
 
 ## Catch or Pass 
 ### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
@@ -778,68 +778,14 @@ class Account {
    }
 }
 ```
-https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
-# API/Module desing
-
-TODO: Desing a class or module like a library.
-System of systems
-visibility default is package
-https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
-
-## Wrap 3th party librabries
-* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
-* Makes it easier to mock out third-party calls when you are testing your own code.
-
-# make each class or member as inaccessible as possible
-Create an interface that returns private classes that are not visible
-# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
-## The I in SOLID
-Interfaces
-
-If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
-
-```java
-class SomeService {
-   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
-
-   void someMethod() {
-      this.personService.findById(id); //nothig else from personService is used in this class
-   }
-}
-```
-Multi interface implementation and inheritance is  thing in Java.
-
-```java
-public interface PersonReader {
-   public Person findById(Long id);
-}
-
-public interface PersonPersister {
-   public void save(Person person);
-}
-
-public interface PersonService extends PersonReader, PersonPersister {
-   
-}
-```
-
-Function Arguments
-```diff
--void checkPersonIdentificationNumber(Person person) {
--   String identNumber = person.getIdentNumber(); //person has a lot more fields
--   ...
--}
-+void checkPersonIdentificationNumber(String identNumber) {
-+   ...
-+}
-```
 
 ---
-# SOLID
-TODO
+## Objects vs Data structures
+Objects hide
+their data behind abstractions and expose functions that operate on that data. Data structure
+expose their data and have no meaningful functions.
+
 ---
-
-
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
@@ -905,8 +851,286 @@ TODO Limit the state representations (String -> Enum) https://www.youtube.com/wa
 
 TODO
 example about rowmapper and toParameters
+---
+# Law of Demeter
+A module should not know about the innards of the objects it manipulates.
+A method f of a class C should only call the methods of these:
+* C
+* An object created by f
+* An object passed as an argument to f
+* An object held in an instance variable of C
 
-TODO Law of Demeter
+The method should not invoke methods on objects that are returned by any of the
+allowed functions. In other words, talk to friends, not to strangers.
+
+OK (TODO chnage names)
+```java
+public class LawOfDemeter {
+   private Topping cheeseTopping;
+
+   public void doSomethingWithPizza(Pizza pizza) {
+      // (1) it's okay to call our own methods
+      doSomething();
+      
+      // (2) it's okay to call methods on objects passed in to our method
+      int price = pizza.getPrice();
+      
+      // (3) it's okay to call methods on any objects we create
+      cheeseTopping = new CheeseTopping();
+      float weight = cheeseTopping.getWeightUsed();
+      
+      // (4) any directly held component objects
+      Foo foo = new Foo();
+      foo.doBar();
+   }
+
+   private void doSomething()
+   {
+      // do something here ...
+   }
+}
+```
+
+NOT OK
+```java
+public class LawOfDemeter {
+   public boolean isInRiskArea(Person person) {
+      String neighborhood = person.getAddress().getNeighborhood(); 
+      if(riskNeighborhoods.contains(neighborhood)) {
+         ...
+      }
+   }
+}
+```
+
+---
+
+https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
+# API/Module desing
+
+TODO: Desing a class or module like a library.
+System of systems
+visibility default is package
+https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
+
+## Wrap 3th party librabries
+* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
+* Makes it easier to mock out third-party calls when you are testing your own code.
+
+# make each class or member as inaccessible as possible
+Create an interface that returns private classes that are not visible
+# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+## The I in SOLID
+Interfaces
+
+If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
+
+```java
+class SomeService {
+   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
+
+   void someMethod() {
+      this.personService.findById(id); //nothig else from personService is used in this class
+   }
+}
+```
+Multi interface implementation and inheritance is  thing in Java.
+
+```java
+public interface PersonReader {
+   public Person findById(Long id);
+}
+
+public interface PersonPersister {
+   public void save(Person person);
+}
+
+public interface PersonService extends PersonReader, PersonPersister {
+   
+}
+```
+
+Function Arguments
+```diff
+-void checkPersonIdentificationNumber(Person person) {
+-   String identNumber = person.getIdentNumber(); //person has a lot more fields
+-   ...
+-}
++void checkPersonIdentificationNumber(String identNumber) {
++   ...
++}
+```
+
+---
+# SOLID
+---
+# SOLID
+## S — Single responsibility principle
+
+A module or class should have responsibility over a single part of the functionality provided by the software.
+A class or module should have one, and only one, reason to be changed.
+
+```
+class User 
+{
+    void CreatePost(Database db, string postMessage)
+    {
+        try
+        {
+            db.Add(postMessage);
+        }
+        catch (Exception ex)
+        {
+            db.LogError("An error occured: ", ex.ToString());
+            File.WriteAllText("\LocalErrors.txt", ex.ToString());
+        }
+    }
+}
+```
+* create a new post
+* log an error in the database
+* and log an error in a local file
+
+---
+# SOLID
+## S — Single responsibility principle
+```
+class Post {
+    private ErrorLogger errorLogger = new ErrorLogger();
+    void CreatePost(Database db, string postMessage) {
+        try {
+            db.Add(postMessage);
+        }
+        catch (Exception ex) {
+            errorLogger.log(ex.ToString())
+        }
+    }
+}
+
+class ErrorLogger {
+    void log(string error) {
+      db.LogError("An error occured: ", error);
+      File.WriteAllText("\LocalErrors.txt", error);
+    }
+}
+```
+two classes that each has one responsibility:
+* to create a post 
+* to log an error
+---
+# SOLID
+## O — Open/closed principle
+
+software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
+
+```
+class Post {
+    void CreatePost(Database db, string postMessage) {
+        if (postMessage.StartsWith("#")) {
+            db.AddAsTag(postMessage);
+        } else {
+            db.Add(postMessage);
+        }
+        // what if post starts with "@" or "$"
+    }
+}
+```
+---
+# SOLID
+## O — Open/closed principle
+```
+class Post {
+    void CreatePost(Database db, string postMessage) {
+        db.Add(postMessage);
+    }
+}
+
+class TagPost : Post {
+    override void CreatePost(Database db, string postMessage) {
+        db.AddAsTag(postMessage);
+    }
+}
+
+// The evaluation of the first character ‘#’ will now be handled elsewhere 
+// If "@" posts have to be added - this will be done with another class without chnaging Post
+```
+---
+# SOLID
+## L — Liskov substitution principle
+
+Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
+
+```
+class Post{
+    void CreatePost(Database db, string postMessage) {
+        db.Add(postMessage);
+    }
+}
+
+class TagPost : Post{
+    override void CreatePost(Database db, string postMessage) {
+        db.AddAsTag(postMessage);
+    }
+}
+
+class MentionPost : Post {
+    void CreateMentionPost(Database db, string postMessage) {
+        string user = postMessage.parseUser();
+
+        db.NotifyUser(user);
+        db.OverrideExistingMention(user, postMessage);
+        base.CreatePost(db, postMessage);
+    }
+}
+
+class PostHandler {
+    private database = new Database();
+
+    void HandleNewPosts() {
+        List<string> newPosts = database.getUnhandledPostsMessages();
+
+        foreach (string postMessage in newPosts) {
+            Post post;
+            if (postMessage.StartsWith("#")) {
+                post = new TagPost();
+            }
+            else if (postMessage.StartsWith("@")) {
+                post = new MentionPost();
+            }
+            else {
+                post = new Post();
+            }
+            post.CreatePost(database, postMessage);
+        }
+    }
+}
+```
+---
+```
+class MentionPost : Post
+{
+    override void CreatePost(Database db, string postMessage) {
+        string user = postMessage.parseUser();
+
+        NotifyUser(user);
+        OverrideExistingMention(user, postMessage)
+        base.CreatePost(db, postMessage);
+    }
+
+    private void NotifyUser(string user) {
+        db.NotifyUser(user);
+    }
+
+    private void OverrideExistingMention(string user, string postMessage) {
+        db.OverrideExistingMention(_user, postMessage);
+    }
+}
+```
+---
+# SOLID
+## D - Dependency inversion principle
+TODO
+---
 
 # Premature Optimization Is the Root of All Evil
 
@@ -953,7 +1177,7 @@ A dispensable is something pointless and unneeded whose absence would make the c
 1. Comments
 2. **Duplicate Code**
 3. Lazy Class
-4. Data Class
+4. **Data Class**
 5. Dead Code
 6. **Speculative Generality**
 
@@ -971,3 +1195,4 @@ All the smells in this group contribute to excessive coupling between classes or
 
 1. Clean Code by Uncle Bob Martin
 2. https://sourcemaking.com/refactoring/smells
+3. https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
