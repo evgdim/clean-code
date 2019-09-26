@@ -288,11 +288,102 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 # Variables
 # Use the right type
 
-* Strings (a.k.a infinite number of possible values) are not for state  - use enums
+# State
+
+## True or False
+
+A value without context does not really matter. That's why it's important to name variables and use the right data structures.
+
+The primitive types usually does not enforse the context.
+Prefer types with more expressive values!
+
 ```java
-   String status = "Active"; // NO
+abstract class Customer {
+   private String phone;
+}
+
+class BranchCustomer extends Customer{
+   private String branchId;
+   private String customerNumber;
+}
+
+class PotentialClient extends Customer{
+   
+}
+```
+
+```java
+class BranchCustomer extends Customer{
+   private String branchId; // can be "615", but also can be "Beer" or "zimbabwe"
+   private String customerNumber;
+}
+```
+
+```java
+class BranchCustomerNumber {
+   private final String branchId;
+   private final String customerNumber;
+
+   public BranchCustomerNumber(String branchId, String customerNumber) {
+      if(/*branchId is not 3 chars or the chars are not digits*/) throw new InvalidBranchCustomerNumberException(...);
+      if(/*customerNumber is not 7 chars or the chars are not digits*/) throw new InvalidBranchCustomerNumberException(...);
+   }
+   //getters
+}
+
+class BranchCustomer extends Customer{
+   private BranchCustomerNumber branchCustomerNumber;
+}
+```
+
+```java
+class RefreshPolicy { //has 4294967296 * 4294967296 = 1.8446744e+19 possible states
+   int size;
+   int frequncy; // 1 - dayly, 2 monthly, 3 yearly
+}
+```
+
+```java
+public enum RefreshSize {
+    ON_WIFI(10),
+    ON_NETWORK(1000);
+ 
+    public final int size;
+ 
+    private RefreshSize(int size) {
+        this.size = size;
+    }
+}
+
+public enum RefreshFrequency {
+    DAYLY,
+    MONTHLY,
+    YEARLY;
+}
+
+class RefreshPolicy { // has 3 * 2 = 6 possible states, which is TESTABLE
+   RefreshSize size;
+   RefreshFrequency frequncy;
+}
+```
+
+* Strings (a.k.a infinite number of possible values) are for data not for state  - use enums
+
+```java
+   order.setStatus("Active"); // Don't do that
+```
+
+```java
+public static final String STATUS_ACTIVE = "Active"; // Better but still not ideal.  
+
+// use STATUS_ACTIVE instead of "Active" in the code
+order.setStatus(STATUS_ACTIVE);
+
+order.setStatus("I still can set whatever string I want here");// ???
 ```
 TODO Limit the state representations
+
+
 
 * Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
 ```java
@@ -301,6 +392,7 @@ TODO Limit the state representations
    person.put("lastName", "Jordan");
    return person;
 ```
+
 
 
 
@@ -447,7 +539,7 @@ BigDecimal devide(int divident, int divisor) {
 # Functions
 ## Return types
 
-```void``` is a code smell.
+```void``` is suspicious.
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
@@ -464,13 +556,11 @@ Optional<Person> findByName(String name) {
 
 
 # Functions
-## Functions either return the value that they are mean to produce or throw an error
-## void functions either complete successfully or thrw an error
+## Functions either return the value that they are mean to produce or throw an error (or return Try monad)
+## void functions either complete successfully or throw an error (or return Try monad)
 
 ## Don't return NULL to "express" that something went wrong.
 ## Don't return a "message" to tell if the function has complete successfully or something went wrong.
-
-
 
 # Side Effects
 
@@ -478,6 +568,7 @@ Optional<Person> findByName(String name) {
 # Side Effects
 ## Extract environment (Date-time, properties, current OS)
 
+Having a side effect in the method makes it hard/impossible to test
 ```java
 int getDaysToNewYear() {
    LocalDate today = LocalDate.now();
@@ -491,7 +582,6 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
    //Good luck
 }
 ```
-
 
 # Side Effects
 ```java
@@ -511,9 +601,6 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 
 # Side Effects
 ## Caching should be easily turned off
-
-
-
 
 # Side Effects
 ## Pure functions
@@ -535,7 +622,7 @@ int multiplyIt(int number, int factor) {
 
 ```java
 int factor = 3;
-int multiplyIt(int number) {
+int multiplyIt(int number) { //TODO add comments
    return number * factor;
 }
 ```
@@ -563,6 +650,7 @@ int multiplyIt(int number) {
 >
 > [side effect] Persists in the database, file, etc.
 
+Try to split functions to one pure function and up to two(input and output) impure functions.
 
 # Side Effects
 ## Jva Streams best practices
@@ -656,10 +744,10 @@ public static void main(String[] args) {
    Either<ArithmeticException, BigDecimal> error = devide(1, 0);
 
    Either<ArithmeticException, BigDecimal> mappedOk = ok.map(result -> result.multiply(BigDecimal.TEN));
-   System.out.println(mappedOk);
+   System.out.println(mappedOk); // Right(2)
 
-   Either<ArithmeticException, BigDecimal> mappedError = error.map(result -> result.multiply(BigDecimal.TEN));
-   System.out.println(mappedError);
+   Either<ArithmeticException, BigDecimal> mappedError = error.map(result -> result.multiply(BigDecimal.TEN)); //multiply will not be applied
+   System.out.println(mappedError); // Left(ArithmeticException)
 }
 ```
 ### Try
