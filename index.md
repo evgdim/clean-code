@@ -294,6 +294,34 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
    assertEquals(2, getDaysToNewYear(LocalDate.of(2019, Month.DECEMBER, 29)));
 }
 ```
+
+Use Springs `@ConfigurationProperties` instead of `@Value` or injecting `Environment`
+
+```java
+@Autowired
+private Environment env; // don't do this
+...
+
+int personMinAge = this.env.getProperty("person.minAge"); 
+```
+
+```java
+@ConfigurationProperties(prefix = "person")
+public class PersonProperties { 
+    private int minAge;
+    private int maxAge;
+    // standard getters and setters
+}
+```
+
+```java
+@Autowired
+private PersonProperties personProperties; // this could be mocked
+
+```
+
+
+
 ### Caching should be easily turned off
 
 ### Pure functions
