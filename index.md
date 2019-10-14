@@ -142,6 +142,15 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 [Functions >](#functions)
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
+# Variables
+
+## Minimize the scope of variables
+Global variables that are immutable/constants are OK.
+Avoid global variables that are written by one entity and read by many.
+AVOID global variables that mutated by multiple entities.
+
+Declare variables as close to the place that they are used as possible.
+
 # Functions
 
 ## Small
@@ -544,7 +553,12 @@ if (cart.isPresent()) {
 ## Streams
 ## Try and Either
 
+
+
 # Code smells
+https://www.youtube.com/watch?v=D4auWwMsEnY
+
+https://www.industriallogic.com/wp-content/uploads/2005/09/smellstorefactorings.pdf
 
 ## Bloaters
 Bloaters are code, methods and classes that have increased to such gargantuan proportions that they are hard to work with. Usually these smells do not crop up right away, rather they accumulate over time as the program evolves (and especially when nobody makes an effort to eradicate them).
@@ -553,6 +567,16 @@ Bloaters are code, methods and classes that have increased to such gargantuan pr
 3. **Primitive Obsession**
 4. Long Parameter List
 5. **Data Clumps**
+
+### Primitive Obsession
+Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed.  
+Remember state representation.
+
+### Data Clumps
+Two or more peaces of data that appear together all the time.
+
+Refactoring => Extract the data peaces in their own object.
+A good thest is: "If one of the data values is deleted does the other make any sense?".
 
 ## Object-Orientation Abusers
 All these smells are incomplete or incorrect application of object-oriented programming principles.
@@ -575,6 +599,13 @@ A dispensable is something pointless and unneeded whose absence would make the c
 4. Data Class
 5. Dead Code
 6. **Speculative Generality**
+
+
+### Speculative Generality
+A code that is written because of feature that might arrive in the future.
+We're bad guessers!
+It makes the code hard to reason about. Code is read more often than it's written.
+Increases abstraction.
 
 ## Couplers
 All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
