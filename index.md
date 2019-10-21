@@ -577,6 +577,7 @@ Two or more peaces of data that appear together all the time.
 
 Refactoring => Extract the data peaces in their own object.
 A good thest is: "If one of the data values is deleted does the other make any sense?".
+TODO: https://www.youtube.com/watch?v=D4auWwMsEnY 16:00
 
 ## Object-Orientation Abusers
 All these smells are incomplete or incorrect application of object-oriented programming principles.
