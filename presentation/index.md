@@ -655,7 +655,8 @@ int multiplyIt(int number) { //TODO add comments
 >
 > [side effect] Persists in the database, file, etc.
 
-Try to split functions to one pure function and up to two(input and output) impure functions.
+Try to split functions to one pure function and up to two(input and output) impure functions. 
+TODO example
 
 # Side Effects
 ## Jva Streams best practices
@@ -680,7 +681,26 @@ strings.stream()
 
 # Error Handling
 
+## Don't ignore exceptions! In the rear cases when this is needed - add a comment.
+## At least log them. 
+
 ## Use Exceptions Rather Than Return Codes
+
+## Catch or Pass 
+### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
+
+```java
+@ControllerAdvice
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+ 
+    @ExceptionHandler(value ={IllegalArgumentException.class, IllegalStateException.class })
+    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "This should be application specific";
+        return handleExceptionInternal(ex, bodyOfResponse, 
+          new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+}
+```
 
 ## Use Unchecked Exceptions
 ### Checked Exception violate the Open/Closed Principle
@@ -788,22 +808,6 @@ Try<String> tryDivide = devide(1, 5)
 ```
 
 `Try` will be supported by Spring declarative transactions since version 5.2 - https://github.com/spring-projects/spring-framework/issues/20361
-
-## Catch or Pass 
-### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
-
-```java
-@ControllerAdvice
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
- 
-    @ExceptionHandler(value ={IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, 
-          new HttpHeaders(), HttpStatus.CONFLICT, request);
-    }
-}
-```
 
 
 # Objects
