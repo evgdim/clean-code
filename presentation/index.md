@@ -282,7 +282,12 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 
 
 # Variables
+## Minimize the scope of variables
+Global variables that are immutable/constants are OK.
+Avoid global variables that are written by one entity and read by many.
+AVOID global variables that mutated by multiple entities.
 
+Declare variables as close to the place that they are used as possible.
 
 
 # Variables
@@ -877,6 +882,62 @@ expose their data and have no meaningful functions.
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
+# Minimize mutability
+Classes should be immutable unless there’s a very good reason to make them mutable.
+
+e.g. `String`, `BigInteger` and `BigDecimal`
+
+1. Don’t provide methods that modify the object’s state (known as mutators).
+2. Ensure that the class can’t be extended. e.g. making the class final
+3. Make all fields final. This clearly expresses your intent in a manner that is enforced by the system. 
+4. Make all fields private. This prevents clients from obtaining access to mutable objects referred to by fields and modifying these objects directly.
+5. Ensure exclusive access to any mutable components. If your class has any fields that refer to mutable objects, ensure that clients of the class cannot obtain references to hese objects.
+
+```java
+public final class Complex {
+   private final double re;
+   private final double im;
+
+   public Complex(double re, double im) {
+      this.re = re;
+      this.im = im;
+   }
+   public double realPart() { return re; }
+   public double imaginaryPart() { return im; }
+   public Complex plus(Complex c) { return new Complex(re + c.re, im + c.im); }
+   public Complex minus(Complex c) { return new Complex(re - c.re, im - c.im); }
+   public Complex times(Complex c) { return new Complex(re * c.re - im * c.im, re * c.im + im * c.re); }
+   public Complex dividedBy(Complex c) { 
+      double tmp = c.re * c.re + c.im * c.im;
+      return new Complex((re * c.re + im * c.im) /tmp, (im * c.re - re * c.im) / tmp);
+   }
+   @Override public boolean equals(Object o) {
+   ...
+   }
+   @Override public int hashCode() {
+   ...
+   }
+   @Override public String toString() {
+   ...
+   }
+}
+```
+Immutable objects are inherently thread-safe; they require no synchronization.
+
+## Reuse common immutable objects (use static factories to cache)
+
+```java
+public static final Complex ZERO = new Complex(0, 0);
+public static final Complex ONE = new Complex(1, 0);
+public static final Complex I = new Complex(0, 1);
+```
+
+
+## Avoid generating getters and setters right away
+
+TODO
+example about rowmapper and toParameters
+
 ## How to make an immutable class
 ```java
 public final class ImmutableStudent { // prevent inheritance
@@ -935,10 +996,8 @@ int total = numbers.stream()
 
 TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
 TODO Limit the state representations (String -> Enum) https://www.youtube.com/watch?v=-lVVfxsRjcY (around 25:00)
-## Avoid generating getters and setters right away
 
-TODO
-example about rowmapper and toParameters
+
 
 # Law of Demeter
 A module should not know about the innards of the objects it manipulates.
@@ -1239,6 +1298,7 @@ TODO
 
 # Code smells
 https://www.youtube.com/watch?v=D4auWwMsEnY
+https://www.industriallogic.com/wp-content/uploads/2005/09/smellstorefactorings.pdf
 ## Bloaters
 Bloaters are code, methods and classes that have increased to such gargantuan proportions that they are hard to work with. Usually these smells do not crop up right away, rather they accumulate over time as the program evolves (and especially when nobody makes an effort to eradicate them).
 1. Long Method
@@ -1246,6 +1306,17 @@ Bloaters are code, methods and classes that have increased to such gargantuan pr
 3. **Primitive Obsession**
 4. Long Parameter List
 5. **Data Clumps**
+
+### Primitive Obsession
+Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed.  
+Remember state representation.
+
+### Data Clumps
+Two or more peaces of data that appear together all the time.
+
+Refactoring => Extract the data peaces in their own object.
+A good thest is: "If one of the data values is deleted does the other make any sense?".
+TODO: https://www.youtube.com/watch?v=D4auWwMsEnY 16:00
 
 ## Object-Orientation Abusers
 All these smells are incomplete or incorrect application of object-oriented programming principles.
@@ -1268,6 +1339,13 @@ A dispensable is something pointless and unneeded whose absence would make the c
 4. **Data Class**
 5. Dead Code
 6. **Speculative Generality**
+
+### Speculative Generality
+A code that is written because of feature that might arrive in the future.
+We're bad guessers!
+It makes the code hard to reason about. Code is read more often than it's written.
+Increases abstraction.
+
 
 ## Couplers
 All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
