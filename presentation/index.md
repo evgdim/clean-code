@@ -271,7 +271,7 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
 
 
-# Names
+# Generl skills
 ## Naming to general skills mapping:
 * Consistent
 * Organized
@@ -279,7 +279,17 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 * Responisbility
 * Communicate it with others
 
+## Take Responsibility
+Take responsibility for your mistakes and try to fix them. 
+Don't make excuses! Don't blame someone else!  Propose solutions instead.
+"Just ask questions and remember that nobody knows what he/she is doing" - You're not responsible for not knowing something at a given point of time, but you have to take action to learn that thing.
+Before asking a question:
+* Think about all resources that you have access to. Can you find the answer there?
+* Prepare your question - provide enough context. Stackoverflow is good way to learn to ask questions - "Off topic", "Too broad", "What have you tried?"
 
+### Pick your poison - do something and make a mistake or do nothing and make a mistake.
+
+## Don't Live with Broken Windows
 
 # Variables
 ## Minimize the scope of variables
