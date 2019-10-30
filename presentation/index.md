@@ -1,4 +1,4 @@
-# <center>The only way to go fast is to go well</center>
+# <center>How to fix working code</center>
 <center>Evgeni Dimitrov</center>
 
 
