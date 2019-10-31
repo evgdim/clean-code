@@ -118,6 +118,8 @@ Broken window principal.
    **********
 ```
 ## When to reafactor
+The biggest problem with code is when it works!
+
 1. Right after the code is working and the unit tests are done
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
@@ -415,11 +417,9 @@ TODO Limit the state representations
 # Functions
 
 
-# Functions
 ## Small
 
 ~~Function should fit on the screen.~~
-<img src="retro_computer.png" alt="drawing" width="200"/>
 
 ***Function has the right size when you cannot extract anything more from it as a function.***
 
@@ -430,14 +430,11 @@ You should be able to explain what a function does in no more than 20 words with
 Don't use a `{}` for lambdas!
 
 
-# Functions
 ## Do one thing
 
 **FUNCTIONS SHOULD DO ONE THING. THEY SHOULD DO IT WELL.
 THEY SHOULD DO IT ONLY.**
 
-
-# Functions
 ## One Level of Abstraction per Function
 
 Don't mix different abstractions in one function:
@@ -461,11 +458,9 @@ Don't mix different abstractions in one function:
    }
 ```
 
-# Functions
 TODO: Add example with car direction from https://tedvinke.wordpress.com/2017/11/24/functional-java-by-example-part-2-tell-a-story/
 
 
-# Functions
 ## One Level of Indentation per Function
 ```java
 public void myFunction(List<Person> people) {
@@ -491,7 +486,10 @@ public void myFunction(List<Person> people) {
 }
 ```
 
-# Functions
+## Prefer clean code over clever code.
+Prefer code that expresses the desired behavior over code that shorter/hacky.
+Prefer cean code over performant code, if it's not IO intensive.
+
 ## Reading Code from Top to Bottom: The Stepdown Rule
 ```java
 if (null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
@@ -594,7 +592,7 @@ int getDaysToNewYear() {
 ```java
 @Test
 public void getDaysToNewYear_shouldReturn2_for29December() {
-   //Good luck
+   //Good luck testing getDaysToNewYear()
 }
 ```
 
@@ -1332,6 +1330,80 @@ Refactoring => Extract the data peaces in their own object.
 A good thest is: "If one of the data values is deleted does the other make any sense?".
 TODO: https://www.youtube.com/watch?v=D4auWwMsEnY 16:00
 
+```java
+class SomeRepository {
+   List<Sale> getTotalSales(LocalDateTime from, LocalDateTime to) {
+      return from(Sales)
+      .where(from <= saleTime && saleTime <= to)
+      .fetch();
+   }
+
+   List<Sale> getWeeklySales(LocalDateTime from) {
+      LocalDateTime to = from.plusDays(7);
+      return from(Sales)
+      .where(from <= saleTime && saleTime <= to)
+      .fetch();
+   }
+
+   List<Sale> getTotalExpense(LocalDateTime from, LocalDateTime to) {
+      LocalDateTime fromOrWeekBefore = from != null ? from : LocalDateTime.now().plusDays(-7);
+      LocalDateTime toOrNow = to != null ? to : LocalDateTime.now();
+      return from(Expense)
+      .where(fromOrWeekBefore <= saleTime && saleTime <= toOrNow)
+      .fetch();
+   }
+}
+```
+
+```java
+class DateRange {
+   private LocalDateTime from; 
+   private LocalDateTime to;
+
+   public DateRange() {
+      this(LocalDateTime.now().plusDays(-7), LocalDateTime.now());
+   }
+
+   public DateRange(LocalDateTime from) {
+      this(from, LocalDateTime.now())
+   }
+
+   public DateRange(LocalDateTime from, LocalDateTime to) {
+      this.from = from != null ? from : LocalDateTime.now().plusDays(-7);
+      this.to = to != null ? to : LocalDateTime.now();      
+      if(this.from.isAfter(this.to)) throw new IllegalArgumentException("From cannot be after to!");
+   }
+
+   public boolean contains(LocalDateTime date) {
+      //...
+   }
+   //getters, NO setters, toString(), etc.
+}
+```
+
+```java
+class SomeRepository {
+   List<Sale> getTotalSales(LocalDateTime from, LocalDateTime to) {
+      return from(Sales)
+      .where(new Daterange(from, to).contains(saleTime))
+      .fetch();
+   }
+
+   List<Sale> getWeeklySales(LocalDateTime from) {
+      return from(Sales)
+      .where(new Daterange(from).contains(saleTime))
+      .fetch();
+   }
+
+   List<Sale> getTotalExpense(LocalDateTime from, LocalDateTime to) {
+      return from(Expense)
+      .where(new Daterange(from, to).contains(saleTime))
+      .fetch();
+   }
+}
+```
+Resolving Data Clumps "moves" the behavior into the extracted class and makes it resable, when you chnage it it chnages everywhere, etc.  
+
 ## Object-Orientation Abusers
 All these smells are incomplete or incorrect application of object-oriented programming principles.
 1. **Switch Statements**
@@ -1365,11 +1437,12 @@ Increases abstraction.
 All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
 1. Feature Envy
 2. Inappropriate Intimacy
-3. Message Chains
+3. **Message Chains**
 4. Middle Man
 5. Incomplete Library Class
 
-
+## Message Chains
+https://www.youtube.com/watch?v=D4auWwMsEnY 20:00
 
 # Sources
 
