@@ -139,7 +139,7 @@ The biggest problem with code is when it works!
    * `Rest endpoints should be in plural and represent a resource`
    * `The database scripts should be placed in folder <project root>/databse`
 
-Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:54)
+Document your properties
 
 # Names
 
@@ -242,10 +242,16 @@ if(type.startsWith("BASIC_")) {...}
 ## Avoid member prefixes
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
+## Avoid abriviations, unless they are common and well known (HTTP, EGN, EIK, etc.)
+## Avoid terms and metaphores that are hard for other to understand
 
 ## Class names
-TODO
-
+Class name should be noun
+Single Responsibility Principle - SRP tells us that a class should have only one reason to change. The name of a class should explain this reason.
+Avoid postfixes that doesn't realy mean much:
+* Helper
+* Manager
+* Util
 
 ## Branch names, commit mesages, PR descriptions, etc
 
@@ -255,6 +261,8 @@ Try to prefix names, mesages and descriptions with an issue identifier if the co
 git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 </pre>
 
+## Don't get naming paralysis (or any paralysis in that matter). 
+Yes, names are very important but they're not important enough to waste huge amounts of time on. If you can't think up a good name in 10 minutes, move on.
 
 # Generl skills
 ## Naming to general skills mapping:
@@ -1005,7 +1013,7 @@ A method f of a class C should only call the methods of these:
 The method should not invoke methods on objects that are returned by any of the
 allowed functions. In other words, talk to friends, not to strangers.
 
-OK (TODO chnage names)
+OK
 ```java
 public class LawOfDemeter {
    private Topping cheeseTopping;
@@ -1296,7 +1304,6 @@ Two or more peaces of data that appear together all the time.
 
 Refactoring => Extract the data peaces in their own object.
 A good thest is: "If one of the data values is deleted does the other make any sense?".
-TODO: https://www.youtube.com/watch?v=D4auWwMsEnY 16:00
 
 ```java
 class SomeRepository {
