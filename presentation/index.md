@@ -93,7 +93,7 @@ for (Author author : authors) {
 # Overview
 ## Questions to answer
 * Is code easy to read?
-* Is code easy to unit test?
+* Is code easy to unit test? Code that is easy to test is easy to reason about.
 * Is code easy to reason?
 * Is application easy to deploy?
 * Is it easy to find bugs and chnage functionality?
@@ -110,7 +110,7 @@ If the foundation is weak the rest cannot be solid.
       *
 ```
 
-Broken window principal.
+Broken window principle.
 ```
    **********
    **********
@@ -143,20 +143,13 @@ Document your properties (TODO https://www.youtube.com/watch?v=azTAKKCtNXE @ 17:
 
 # Names
 
-
-# Names
-
 ## True or False ?
-
-# Names
 
 ## Names provide context
 
 ```java
 boolean isOperationApproved = true;
 ```
-
-# Names
 ## Scope
 Variable names should be proportional to their scope 
 
@@ -165,8 +158,6 @@ for(int i = 0; i < 10; i++) {
    ...
 }
 ```
-
-# Names
 Avoid single letter variables 
    exceptions: lambdas and very short methods
    
@@ -176,7 +167,6 @@ Avoid single letter variables
 .map(l -> l.getParent())
 ```
 
-# Names
 ## Use Intention-Revealing Names
 
 ```diff
@@ -189,7 +179,6 @@ Avoid single letter variables
 + List<Person> owners;
 ```
 
-# Names
 ## Make Meaningful Distinctions
 
 ```diff
@@ -197,7 +186,6 @@ Avoid single letter variables
 + void copyChars(char source[],char destination[]) {
 ```
 
-# Names
 ## Use Searchable Names
 
 * Prefer long descriptive names over abbreviations
@@ -212,7 +200,6 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 + private long elapsedTimeInMilliseconds;
 ```
 
-# Names
 ## Avoid Mental Mapping
 
 ```diff
@@ -241,7 +228,6 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 
 ```
 
-# Names
 ## Extract variable when it makes the code more readable 
 ```diff
 -if(context.getAttribute("TEST_MODE")) {...}
@@ -253,17 +239,14 @@ Stick to expressions when they could be read as a sentence
 if(type.startsWith("BASIC_")) {...}
 ```
 
-# Names
 ## Avoid member prefixes
 Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
 
 
-# Names
 ## Class names
 TODO
 
 
-# Names
 ## Branch names, commit mesages, PR descriptions, etc
 
 Try to prefix names, mesages and descriptions with an issue identifier if the code change is related.
@@ -1129,7 +1112,7 @@ Function Arguments
 A module or class should have responsibility over a single part of the functionality provided by the software.
 A class or module should have one, and only one, reason to be changed.
 
-```
+```C#
 class User 
 {
     void CreatePost(Database db, string postMessage)
@@ -1153,7 +1136,7 @@ class User
 
 # SOLID
 ## S — Single responsibility principle
-```
+```C#
 class Post {
     private ErrorLogger errorLogger = new ErrorLogger();
     void CreatePost(Database db, string postMessage) {
@@ -1182,7 +1165,7 @@ two classes that each has one responsibility:
 
 software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
 
-```
+```C#
 class Post {
     void CreatePost(Database db, string postMessage) {
         if (postMessage.StartsWith("#")) {
@@ -1197,7 +1180,7 @@ class Post {
 
 # SOLID
 ## O — Open/closed principle
-```
+```C#
 class Post {
     void CreatePost(Database db, string postMessage) {
         db.Add(postMessage);
@@ -1219,7 +1202,7 @@ class TagPost : Post {
 
 Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
 
-```
+```C#
 class Post{
     void CreatePost(Database db, string postMessage) {
         db.Add(postMessage);
@@ -1265,7 +1248,7 @@ class PostHandler {
 }
 ```
 
-```
+```C#
 class MentionPost : Post
 {
     override void CreatePost(Database db, string postMessage) {
@@ -1291,22 +1274,7 @@ class MentionPost : Post
 TODO
 
 
-# Premature Optimization Is the Root of All Evil
 
-## Source of bad performance:
-* IO us slower than memory and CPU by a factor of millions
-* Objects that are meant to be created once
-   * Pools (Connection pools, Thread pools)
-   * Factories 
-   * Jackson ObjectMapper
-* Regexes might be slow
-
-
-## Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is. 
-* VisualVM
-* FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
-
-## Don't do something just because you think it's slow. The JVM optimizes a lot under the hood 
 
 # Code smells
 https://www.youtube.com/watch?v=D4auWwMsEnY
@@ -1432,6 +1400,24 @@ We're bad guessers!
 It makes the code hard to reason about. Code is read more often than it's written.
 Increases abstraction.
 
+**Premature Optimization Is the Root of All Evil**
+A code that is written in a certain way because it will be more performant. 
+
+Source of bad performance:
+* IO us slower than memory and CPU by a factor of millions
+* Objects that are meant to be created once
+   * Pools (Connection pools, Thread pools)
+   * Factories 
+   * Jackson ObjectMapper
+* Regexes might be slow
+
+Don't do something just because you think it's slow. The JVM optimizes a lot under the hood
+Iterating a List of 10 elements is super fast, dont need to wori about it!
+
+**Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is.**
+* VisualVM
+* FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
+ 
 
 ## Couplers
 All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
@@ -1441,8 +1427,6 @@ All the smells in this group contribute to excessive coupling between classes or
 4. Middle Man
 5. Incomplete Library Class
 
-## Message Chains
-https://www.youtube.com/watch?v=D4auWwMsEnY 20:00
 
 # Sources
 
