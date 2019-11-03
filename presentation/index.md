@@ -1056,7 +1056,17 @@ public class LawOfDemeter {
 
 
 https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
-# API/Module desing
+# API/Module design
+
+## A module, class or function should work correctly by itself and should not depend on the result some other module, class, function or variable
+
+This will make `someFunction` unusable in other parts of the code. `someFunction` is tightly couple to the piece of code that provides `order`
+```java
+void someFunction(Order order) { //This is a bad code!!! 
+   order.getItems().get(0); //We know that at this point the order vahe only one item... 
+   ... 
+}
+```
 
 TODO: Desing a class or module like a library.
 System of systems
@@ -1114,7 +1124,6 @@ Function Arguments
 
 # SOLID
 
-# SOLID
 ## S — Single responsibility principle
 
 A module or class should have responsibility over a single part of the functionality provided by the software.
@@ -1142,7 +1151,6 @@ class User
 * and log an error in a local file
 
 
-# SOLID
 ## S — Single responsibility principle
 ```C#
 class Post {
@@ -1168,7 +1176,6 @@ two classes that each has one responsibility:
 * to create a post 
 * to log an error
 
-# SOLID
 ## O — Open/closed principle
 
 software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
@@ -1186,7 +1193,6 @@ class Post {
 }
 ```
 
-# SOLID
 ## O — Open/closed principle
 ```C#
 class Post {
@@ -1205,7 +1211,6 @@ class TagPost : Post {
 // If "@" posts have to be added - this will be done with another class without chnaging Post
 ```
 
-# SOLID
 ## L — Liskov substitution principle
 
 Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
@@ -1434,6 +1439,13 @@ All the smells in this group contribute to excessive coupling between classes or
 4. Middle Man
 5. Incomplete Library Class
 
+## Other
+
+### Noisy logging
+* Log errors/exceptions  
+* Log input, output
+* Log Side effects
+* Avoid logging computed values/results of pure functions - e.g. the "input is 1 and 2" "the sum = 3"
 
 # Sources
 
