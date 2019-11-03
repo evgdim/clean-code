@@ -1063,10 +1063,26 @@ https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
 This will make `someFunction` unusable in other parts of the code. `someFunction` is tightly couple to the piece of code that provides `order`
 ```java
 void someFunction(Order order) { //This is a bad code!!! 
-   order.getItems().get(0); //We know that at this point the order vahe only one item... 
+   order.getItems().get(0); //We know that at this point the order have only one item... 
    ... 
 }
 ```
+
+## The structure of the project should express the meaning of the project
+
+* src/main/java
+   * models
+   * repositories
+   * services
+   * views
+
+* src/main/java
+   * users
+   * orders
+   * payments
+   * authentication
+
+
 
 TODO: Desing a class or module like a library.
 System of systems
