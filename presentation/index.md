@@ -429,6 +429,8 @@ Extract method candidates:
 * loop blocks bigger than X lines
 * try blocks bigger than X lines
 
+Smaller methods run faster - it's more likely that the JIT compiler will optimize them over big methods
+
 # Refactoring Demo =>
 
 You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
@@ -555,15 +557,14 @@ BigDecimal devide(int divident, int divisor) {
 }
 ```
 
-# Functions
 ## Return types
 
 ```void``` is suspicious.
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
+## Minimize the number of `return`s in a function.
 
-# Functions
 ## Don't return null
 Use Optional to express that the function can return null value
 
