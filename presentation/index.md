@@ -423,7 +423,13 @@ TODO Limit the state representations
 
 ***Function has the right size when you cannot extract anything more from it as a function.***
 
-**Refactoring Demo =>**
+### Extract method
+Extract method candidates:
+* if - else blocks bigger than X lines
+* loop blocks bigger than X lines
+* try blocks bigger than X lines
+
+# Refactoring Demo =>
 
 You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
