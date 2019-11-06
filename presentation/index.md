@@ -141,6 +141,9 @@ The biggest problem with code is when it works!
 
 Document your properties
 
+# Sonar
+TODO user sonar for IDE
+
 # Names
 
 ## True or False ?
