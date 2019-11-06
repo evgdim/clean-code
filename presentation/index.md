@@ -251,10 +251,16 @@ Avoid prefixing member variables with “m_” . Your classes and functions shou
 ## Class names
 Class name should be noun
 Single Responsibility Principle - SRP tells us that a class should have only one reason to change. The name of a class should explain this reason.
-Avoid postfixes that doesn't realy mean much:
+
+Avoid pre/postfixes that doesn't realy mean much:
 * Helper
 * Manager
 * Util
+* Info
+* Data
+
+What's the difference between `OrderInfo` and `OrderData`?
+Instead: `DashboardSummaryOrderInfo` or `DataWarehouseOrderDetails`
 
 ## Branch names, commit mesages, PR descriptions, etc
 
@@ -267,7 +273,7 @@ git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
 ## Don't get naming paralysis (or any paralysis in that matter). 
 Yes, names are very important but they're not important enough to waste huge amounts of time on. If you can't think up a good name in 10 minutes, move on.
 
-# Generl skills
+# HIDDEN CHAPTER - Generl skills
 ## Naming to general skills mapping:
 * Consistent
 * Organized
@@ -884,6 +890,10 @@ Objects hide
 their data behind abstractions and expose functions that operate on that data. Data structure
 expose their data and have no meaningful functions.
 
+## Discover value objects
+```java
+privateMethod(a, b); -> MyUtils.method(a, b); -> new MyValueObject(a, b).method()
+```
 
 # Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
