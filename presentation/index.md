@@ -124,7 +124,7 @@ The biggest problem with code is when it works!
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
 
-# Docs
+# Docs TODO move it somewehre else
 `README.md` or even a folder full of readmes
 
 * Branching strategy (Git Flow / Trunk based development)
@@ -243,7 +243,7 @@ if(type.startsWith("BASIC_")) {...}
 ```
 
 ## Avoid member prefixes
-Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need them.
+Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need prefixes.
 
 ## Avoid abriviations, unless they are common and well known (HTTP, EGN, EIK, etc.)
 ## Avoid terms and metaphores that are hard for other to understand
@@ -537,8 +537,20 @@ Fully describe what the function does in it's name.
 
 
 ## Avoid output argumnets
+Arguments for input returning object for output.
+
 ## Try to keep the arguments on the same level of abstraction as the function
-## Avoid boolean parameters - this implies that the function does more than one thing
+```java
+Overdraft calculateOverdraftLimitForClient(Client client, ByteArraysOutputStram transactionsFile); //not OK
+```
+## Avoid boolean parameters
+* function does more than one thing and violates SPR 
+* makes the call hard to read 
+```java
+activateUser(user, true); //what does true mean here??`
+```
+* often happens to big old functions that have to change 
+
 ## Consider wrapping some of the function arguments in a class when appropriate
 ```diff
 -Circle makeCircle(double x, double y, double radius);
@@ -549,7 +561,7 @@ The logic related to this parameters will move to the new class.
 
 ## Check the input parameters - fail as fast as possible
 ```java
-BigDecimal devide(int divident, int divisor) {
+BigDecimal devide(Integer divident, Integer divisor) {
    Objects.requireNonNull(divident);
    Objects.requireNonNull(divisor);
    ...
@@ -570,6 +582,29 @@ Optional<Person> findByName(String name) {
    ...
 }
 ```
+
+Make class propertis either nullable or not 
+```java
+class Person {
+   private final String name;
+   private final String address;
+
+   public Person(String name, String address) {
+      Objects.requireNonNull(name);
+      this.name = name;
+      this.address = address;
+   }
+
+   public String getName() { // is never null can return it as is
+      return this.name;
+   }
+
+   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
+      return Optional.ofNullable(this.address)
+   }
+}
+```
+
 
 ## Functions either return the value that they are mean to produce or throw an error (or return Try monad)
 ## void functions either complete successfully or throw an error (or return Try monad)
