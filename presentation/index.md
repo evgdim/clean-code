@@ -297,7 +297,7 @@ Before asking a question:
 ## Minimize the scope of variables
 Global variables that are immutable/constants are OK.
 Avoid global variables that are written by one entity and read by many.
-AVOID global variables that mutated by multiple entities.
+AVOID global variables that mutated by multiple entities (e.g. `public static` variable that is not final ).
 
 Declare variables as close to the place that they are used as possible.
 
@@ -526,7 +526,6 @@ boolean isStatusError(Response response) {
 Fully describe what the function does in it's name. 
 
 
-# Functions
 ## Function Arguments
 
 ### Good
@@ -537,17 +536,17 @@ Fully describe what the function does in it's name.
 ### Bad
 
 
-# Functions
-* Avoid output argumnets
-* Try to keep the arguments on the same level of abstraction as the function
-* Avoid boolean parameters - this implies that the function does more than one thing
-* Consider wrapping some of the function arguments in a class when appropriate
+## Avoid output argumnets
+## Try to keep the arguments on the same level of abstraction as the function
+## Avoid boolean parameters - this implies that the function does more than one thing
+## Consider wrapping some of the function arguments in a class when appropriate
 ```diff
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
 ```
+Always search for the occurance of the same params that are extracted, to be able to replace them with the new class.
+The logic related to this parameters will move to the new class.
 
-# Functions
 ## Check the input parameters - fail as fast as possible
 ```java
 BigDecimal devide(int divident, int divisor) {
@@ -563,8 +562,6 @@ BigDecimal devide(int divident, int divisor) {
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
-## Minimize the number of `return`s in a function.
-
 ## Don't return null
 Use Optional to express that the function can return null value
 
@@ -574,18 +571,15 @@ Optional<Person> findByName(String name) {
 }
 ```
 
-
-# Functions
 ## Functions either return the value that they are mean to produce or throw an error (or return Try monad)
 ## void functions either complete successfully or throw an error (or return Try monad)
 
 ## Don't return NULL to "express" that something went wrong.
 ## Don't return a "message" to tell if the function has complete successfully or something went wrong.
+## Minimize the number of `return`s in a function.
 
 # Side Effects
 
-
-# Side Effects
 ## Extract environment (Date-time, properties, current OS)
 
 Having a side effect in the method makes it hard/impossible to test
@@ -603,7 +597,6 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
-# Side Effects
 ```java
 int getDaysToNewYear(LocalDate today) {
    LocalDate newYearsDay = LocalDate.of(today.getYear(), Month.DECEMBER, 31);
@@ -618,11 +611,8 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
-
-# Side Effects
 ## Caching should be easily turned off
 
-# Side Effects
 ## Pure functions
 
 1. The function does not chnage anything
@@ -647,7 +637,6 @@ int multiplyIt(int number) { //TODO add comments
 }
 ```
 
-# Side Effects
 ## Separate side effects from business logic
 
 >You get on the train
@@ -673,7 +662,6 @@ int multiplyIt(int number) { //TODO add comments
 Try to split functions to one pure function and up to two(input and output) impure functions. 
 TODO example
 
-# Side Effects
 ## Jva Streams best practices
 * Avoid passing streams around, pass collections
 * Don't mutate data in a stream (in peek and forEach)
