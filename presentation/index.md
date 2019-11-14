@@ -428,6 +428,24 @@ TODO Limit the state representations
 ## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
 * Make all variables and class properties constants 
 * don't add setters in a class untill you need it
+* don't add getters in a class untill you need it
+```diff
+//we need the number of items cheaper than 10€ in an order
+-order.getItems().stream()
+-   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
+-   .count();
+
++class Order {
++   ...
++   private List<OrderItem> items;
++
++   public List<OrderItem> getNumberOfCheapItems() {
++      return this.items.stream()
++     .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
++     .count();
++   }
++}
+```
 
 
 # Functions
@@ -1067,7 +1085,7 @@ int total = numbers.stream()
 * Thread-safe - no synchronisation needed
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
 
-TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc.
+TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc. This also limits the state representation - having setters gives you infinite num of possible values 
 TODO Limit the state representations (String -> Enum) https://www.youtube.com/watch?v=-lVVfxsRjcY (around 25:00)
 
 
