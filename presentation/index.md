@@ -203,7 +203,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 + private long elapsedTimeInMilliseconds;
 ```
 
-## Avoid Mental Mapping
+## Avoid Mental Mapping and "encription"
 
 ```diff
 -int binarySearch(int arr[], int l, int r, int x) {
@@ -227,6 +227,21 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 +       return binarySearch(arr, mid + 1, rightIndex, keyToFind);
 +   }
 +   return -1;
++}
+
+```
+
+```diff
+-if(machine.getKind() == 0) {
+-   ...
+-}
+
+-if(machine.getKind() == MachineKind.METAL_CUTTING.getValue()) { // better
+-   ...
+-}
+
++if(machine.getKind() == MachineKind.METAL_CUTTING) { // best - limit the state representation of the kind filed by makeing it an enum instead of a number
++   ...
 +}
 
 ```
@@ -410,8 +425,9 @@ TODO Limit the state representations
    return person;
 ```
 
-
-
+## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
+* Make all variables and class properties constants 
+* don't add setters in a class untill you need it
 
 
 # Functions
