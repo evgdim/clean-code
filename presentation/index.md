@@ -141,8 +141,11 @@ The biggest problem with code is when it works!
 
 Document your properties
 
-# Sonar
-TODO user sonar for IDE
+# Sonarqube
+https://www.sonarqube.org/
+
+* For the IDE
+* As a server application
 
 # Names
 
@@ -413,9 +416,6 @@ order.setStatus(STATUS_ACTIVE);
 
 order.setStatus("I still can set whatever string I want here");// ???
 ```
-TODO Limit the state representations
-
-
 
 * Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
 ```java
@@ -499,9 +499,6 @@ Don't mix different abstractions in one function:
       return message.toString();
    }
 ```
-
-TODO: Add example with car direction from https://tedvinke.wordpress.com/2017/11/24/functional-java-by-example-part-2-tell-a-story/
-
 
 ## One Level of Indentation per Function
 ```java
@@ -729,7 +726,29 @@ int multiplyIt(int number) { //TODO add comments
 > [side effect] Persists in the database, file, etc.
 
 Try to split functions to one pure function and up to two(input and output) impure functions. 
-TODO example
+
+```java
+class OrdersService {
+   private final OrdersRepository ordersRepository;
+   private final AuditLogRepository auditLogRepository;
+   private final InventoryGateway inventoryGateway;
+   OrdersService(OrdersRepository ordersRepository, InventoryGateway inventoryGateway, AuditLogRepository auditLogRepository) {
+      this.ordersRepository = ordersRepository;
+      this.inventoryGateway = inventoryGateway;
+      this.auditLogRepository = auditLogRepository;
+   }
+   
+   void processOrder(Long orderId) {
+      Order order = this.ordersRepository.getById(orderId);                                                 //side effect (input) no business logic allowed
+      ItemsAvailablility itemsAvailablility = this.inventoryGateway.checkAvailability(order.getItems());    //side effect (input) no business logic allowed
+
+      ProcessedOrder processedOrder = order.process(itemsAvailablility);                                    // pure function - business logic
+
+      this.ordersRepository.save(processedOrder);                                                           //side effect (output) no business logic allowed
+      this.auditLogRepository.log(processedOrder);                                                          //side effect (output) no business logic allowed
+   }
+}
+```
 
 ## Jva Streams best practices
 * Avoid passing streams around, pass collections
@@ -1025,9 +1044,21 @@ public static final Complex I = new Complex(0, 1);
 
 
 ## Avoid generating getters and setters right away
+If you have to do something with the memebers of a class - implement this logic into the class itself, don't expose the member.
 
-TODO
-example about rowmapper and toParameters
+```java
+class Order {
+   private List<OrderItem> items;
+
+   boolean doesContainExpensiveItem(BigDecimal limit) {
+      return this.items.stream().anyMatch(item -> item.getPrice().isMoreThan(limit));
+   }
+
+   boolean areAllItemsAvailable(Predicate<OrderItem> isAvailable) { // checking availability is a side effect(e.g. checking in a database) that's why we use higher order function
+      return this.items.allMatch(isAvailable)
+   }
+}
+```
 
 ## How to make an immutable class
 ```java
@@ -1102,6 +1133,9 @@ public abstract class Order {
         this.items = items;
         this.client = client;
     }
+
+    //TODO factory method
+    //TODO calculate total price
 }
 
 class NewOrder extends Order {
@@ -1306,7 +1340,7 @@ void someFunction(Order order) { //This is a bad code!!!
 TODO: Desing a class or module like a library.
 System of systems
 visibility default is package
-https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00
+https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00 - procedural vs OOP - move to a different section
 
 ## Wrap 3th party librabries
 * Minimize your dependencies upon it: You can choose to move to a different library in the future. 
@@ -1347,7 +1381,7 @@ public interface PersonService extends PersonReader, PersonPersister {
 
 Function Arguments
 ```diff
--void checkPersonIdentificationNumber(Person person) {
+-void checkPersonIdentificationNumber(Person person) { //to test the function a whole person is needed
 -   String identNumber = person.getIdentNumber(); //person has a lot more fields
 -   ...
 -}
