@@ -1398,6 +1398,8 @@ Function Arguments
 A module or class should have responsibility over a single part of the functionality provided by the software.
 A class or module should have one, and only one, reason to be changed.
 
+TODO add some comments - https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
+
 ```C#
 class User 
 {
@@ -1419,8 +1421,7 @@ class User
 * log an error in the database
 * and log an error in a local file
 
-
-## S — Single responsibility principle
+## Solution
 ```C#
 class Post {
     private ErrorLogger errorLogger = new ErrorLogger();
@@ -1445,6 +1446,8 @@ two classes that each has one responsibility:
 * to create a post 
 * to log an error
 
+Another example is class from the web layer (e.g. Spring @Controller) to have business logic in it, or a class from the service layer to have something different than business logic in it(e.g. data access)
+
 ## O — Open/closed principle
 
 software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
@@ -1462,7 +1465,6 @@ class Post {
 }
 ```
 
-## O — Open/closed principle
 ```C#
 class Post {
     void CreatePost(Database db, string postMessage) {
@@ -1551,11 +1553,53 @@ class MentionPost : Post
 }
 ```
 
-# SOLID
 ## D - Dependency inversion principle
-TODO
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
 
+```C#
+class Post
+{
+    private ErrorLogger errorLogger = new ErrorLogger(); //this violates the principle - If we wanted to use a different kind of logger, we would have to modify the class
 
+    void CreatePost(Database db, string postMessage)
+    {
+        try
+        {
+            db.Add(postMessage);
+        }
+        catch (Exception ex)
+        {
+            errorLogger.log(ex.ToString())
+        }
+    }
+}
+```
+
+## Solution
+
+```C#
+class Post
+{
+    private Logger logger;
+
+    public Post(Logger injectedLogger) //injected
+    {
+        logger = injectedLogger;
+    }
+
+    void CreatePost(Database db, string postMessage)
+    {
+        try
+        {
+            db.Add(postMessage);
+        }
+        catch (Exception ex)
+        {
+            logger.log(ex.ToString())
+        }
+    }
+}
+```
 
 
 # Code smells
