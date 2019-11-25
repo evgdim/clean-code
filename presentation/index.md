@@ -298,6 +298,7 @@ Yes, names are very important but they're not important enough to waste huge amo
 * Self management
 * Responisbility
 * Communicate it with others
+* Tell the TRUTH
 
 ## Take Responsibility
 Take responsibility for your mistakes and try to fix them. 
@@ -1001,7 +1002,7 @@ e.g. `String`, `BigInteger` and `BigDecimal`
 2. Ensure that the class can’t be extended. e.g. making the class final
 3. Make all fields final. This clearly expresses your intent in a manner that is enforced by the system. 
 4. Make all fields private. This prevents clients from obtaining access to mutable objects referred to by fields and modifying these objects directly.
-5. Ensure exclusive access to any mutable components. If your class has any fields that refer to mutable objects, ensure that clients of the class cannot obtain references to hese objects.
+5. Ensure exclusive access to any mutable components. If your class has any fields that refer to mutable objects, ensure that clients of the class cannot obtain references to these objects.
 
 ```java
 public final class Complex {
@@ -1083,6 +1084,7 @@ public final class ImmutableStudent { // prevent inheritance
    public Dissertation getDissertation() { 
       return dissertation.clone();
    } 
+   //TODO add unmodifiable collecttion getter
    // to mutate an immutable object - copy it
    public ImmutableStudent withName(String name) { 
       return new ImmutableStudent(this.id, name, this.dissertation);
