@@ -249,6 +249,55 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 
 ```
 
+## Avoid Magic Numbers, Magic String, etc.
+Use named constants, extract variabled or methods to express your intention
+```java
+// NOT OK
+List<int[]> getCells() { 
+   //0th element - status - 4 - FLAGGED
+   //1th element - x
+   //2nd element - y
+   List<int[]> list1 = new ArrayList<int[]>();
+   for (int[] x : theList) 
+      if (x[0] == 4) list1.add(x); 
+   return list1;
+}
+```
+
+```java
+// BETTER
+List<int[]> getFlaggedCells() { 
+   List<int[]> flaggedCells = new ArrayList<int[]>();
+   for (int[] cell : gameBoard) {
+      boolean isFlagged = cell[STATUS] == FLAGGED;
+      if (isFlagged) 
+         flaggedCells.add(cell); 
+   }
+   return flaggedCells;
+}
+```
+
+```java
+// BEST - extract class
+List<Cell> getFlaggedCells() { 
+   List<Cell> flaggedCells = new ArrayList<Cell>();
+   for (Cell cell : gameBoard) {
+      if (cell.isFlagged()) 
+         flaggedCells.add(cell); 
+   }
+   return flaggedCells;
+}
+```
+Bonus: You can go further and transform to a stream to get rid of the mutable variable flaggedCells.
+
+```java
+List<Cell> getFlaggedCells() { 
+   return gameBoard.stream()
+            .filter(cell -> cell.isFlagged())
+            .collect(toList());
+}
+```
+
 ## Extract variable when it makes the code more readable 
 ```diff
 -if(context.getAttribute("TEST_MODE")) {...}
@@ -1325,17 +1374,19 @@ void someFunction(Order order) { //This is a bad code!!!
 
 ## The structure of the project should express the meaning of the project
 
+This doesent tell much about the project itself. It's pretty generic.
 * src/main/java
    * models
    * repositories
    * services
    * views
 
+This expresses the meaning of the project - it's an application that manages *orders*, made by *customers*, which can also *pay* for their orders and all this can be summarized by a bunch of reports. 
 * src/main/java
-   * users
+   * customers
    * orders
    * payments
-   * authentication
+   * reporting
 
 
 
@@ -1348,9 +1399,12 @@ https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00 - proc
 * Minimize your dependencies upon it: You can choose to move to a different library in the future. 
 * Makes it easier to mock out third-party calls when you are testing your own code.
 
-# make each class or member as inaccessible as possible
-Create an interface that returns private classes that are not visible
-# Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+### make each class or member as inaccessible as possible
+TODO Create an interface that returns private classes that are not visible
+
+### Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
+
+
 ## The I in SOLID
 Interfaces
 
