@@ -515,8 +515,6 @@ Extract method candidates:
 
 Smaller methods run faster - it's more likely that the JIT compiler will optimize them over big methods
 
-# Refactoring Demo =>
-
 You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
 Don't use a `{}` for lambdas!
@@ -574,6 +572,8 @@ public void myFunction(List<Person> people) {
    }
 }
 ```
+
+## Refactoring Demo =>
 
 ## Prefer clean code over clever code.
 Prefer code that expresses the desired behavior over code that shorter/hacky.
@@ -963,6 +963,35 @@ Try<String> tryDivide = devide(1, 5)
 
 
 # Objects
+
+## Keep logic in it's domain
+
+If a particular variable/field has a behavior related to it - extract class.
+
+```java
+String url = ...
+
+boolean isSecure(String url) {
+   return "https".equals(url.substring(0, url.indexOf("://")));
+}
+
+```
+
+```java
+class Url {
+   private final String url;
+   Url(String url) {
+      Objects.requireNonNull(url);//also check if not empty, etc.
+   }
+
+   boolean isSecure() {
+      return "https".equals(this.url.substring(0, url.indexOf("://")));
+   }
+
+   //all other methods related to url will coalesce in this class and not "float" trough various other classes
+}
+```
+
 ## Prefer factory methods when multiple constructors are needed
 ```java
 class Person {
@@ -990,6 +1019,9 @@ class Person {
 * Makes it easier to remove all knowledge of a concrete implementation that a class needs to use.
 
 ## Avoid multiple variables/fields depending on each other(Data Clumps)
+Extract Data clumps as classes
+TODO - example
+
 ## Prefer computation over duplicated data
 
 ```java
@@ -1001,12 +1033,14 @@ class Account {
 ```
 
 ```java
+//setting a lock
 account.getLocks().add(new Lock("Case 123"));
 account.setStatus(Locked);
 ```
 
 
 ```java
+/removing a lock
 account.getLocks().remove(lockToRemove);
 if(accounts.getLocks().isEmpty()) {
    account.setStatus(Active);
@@ -1030,19 +1064,22 @@ class Account {
 
 
 ## Objects vs Data structures
-Objects hide
-their data behind abstractions and expose functions that operate on that data. Data structure
-expose their data and have no meaningful functions.
+*Objects* hide their data behind abstractions and expose functions that operate on that data. 
+*Data structures* expose their data and have no meaningful functions.
 
 ## Discover value objects
 ```java
-privateMethod(a, b); -> MyUtils.method(a, b); -> new MyValueObject(a, b).method()
+privateMethod(a, b); 
+//-> 
+MyUtils.method(a, b); 
+//-> 
+new MyValueObject(a, b).method()
 ```
 
-# Mutability is the new GOTO
+## Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
 
-# Minimize mutability
+## Minimize mutability
 Classes should be immutable unless there’s a very good reason to make them mutable.
 
 e.g. `String`, `BigInteger` and `BigDecimal`
@@ -1092,7 +1129,6 @@ public static final Complex ONE = new Complex(1, 0);
 public static final Complex I = new Complex(0, 1);
 ```
 
-
 ## Avoid generating getters and setters right away
 If you have to do something with the memebers of a class - implement this logic into the class itself, don't expose the member.
 
@@ -1141,28 +1177,8 @@ public final class ImmutableStudent { // prevent inheritance
 }
 ```
 
-```java
-List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9);
-```
-
-```java
-int total = 0;
-for(int i = 0; i < number.size(); i++) {
-   if(numbers.get(i) % 2 == 0) {
-      total += numbers.get(i) * 2;
-   }
-}
-```
-
-```java
-int total = numbers.stream()
-                   .filter(n -> n % 2 == 0)
-                   .mapToInt(n -> n * 2)
-                   .sum();
-```
-
 ## Immutable objects are:
-* Easier to reason about - no objects in invalid state
+* Easier to reason about - NO OBJECTS IN IVALID STATE
 * Easier to share/cache
 * Thread-safe - no synchronisation needed
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
