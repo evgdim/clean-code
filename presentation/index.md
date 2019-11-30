@@ -371,7 +371,6 @@ Declare variables as close to the place that they are used as possible.
 
 
 # Variables
-# Use the right type
 
 # State
 
@@ -421,6 +420,7 @@ class BranchCustomer extends Customer{
 }
 ```
 
+TODO some comments
 ```java
 class RefreshPolicy { //has 4294967296 * 4294967296 = 1.8446744e+19 possible states
    int size;
@@ -495,6 +495,52 @@ order.setStatus("I still can set whatever string I want here");// ???
 +     .count();
 +   }
 +}
+```
+
+## Avoid Accomulator variables
+
+```java
+class OrdersSummary {
+   BigDecimal totalPrice;
+   int toatalNumberOfOrders;
+   List<String> allErrors;
+   ...
+}
+```
+
+```java
+OrdersSummary clculateOrdersSummary(List<Order> orders) {
+   BigDecimal totalPrice = BigDecimal.ZERO;              // for small methods it's not a Biggie, but for big methods it get very bad
+   int toatalNumberOfOrders = 0;
+   List<String> allErrors = new ArrayList<>();
+
+   for (Order order : orders) {                          // this violates SRP -> separating this into 3 loops doin one thing is still better
+      totalPrice = totalPrice.add(order.getPrice);
+      toatalNumberOfOrders++;
+      if(order.getDelivery().isFailed()) {
+         allErrors.add(order.getDelivery().getFailReason());
+      }
+   }
+
+   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
+}
+```
+
+```java
+OrdersSummary clculateOrdersSummary(List<Order> orders) {
+   int toatalNumberOfOrders = orders.size();
+
+   BigDecimal totalPrice = orders.stream()
+                                 .map(order -> order.getPrice())
+                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+   List<String> allErrors = orders.stream()
+                                  .filter(order -> order.getDelivery().isFailed())
+                                  .map(order -> order.getDelivery().getFailReason())
+                                  .collect(toList());
+
+   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
+}
 ```
 
 
@@ -617,8 +663,9 @@ Fully describe what the function does in it's name.
 ### Bad
 
 
-## Avoid output argumnets
-Arguments for input returning object for output.
+## Avoid output argumnets and in general avoid modifying arguments
+Arguments -> for input 
+Returning object -> for output
 
 ## Try to keep the arguments on the same level of abstraction as the function
 ```java
@@ -661,28 +708,6 @@ Use Optional to express that the function can return null value
 ```java
 Optional<Person> findByName(String name) {
    ...
-}
-```
-
-Make class propertis either nullable or not 
-```java
-class Person {
-   private final String name;
-   private final String address;
-
-   public Person(String name, String address) {
-      Objects.requireNonNull(name);
-      this.name = name;
-      this.address = address;
-   }
-
-   public String getName() { // is never null can return it as is
-      return this.name;
-   }
-
-   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
-      return Optional.ofNullable(this.address)
-   }
 }
 ```
 
@@ -1020,7 +1045,34 @@ class Person {
 
 ## Avoid multiple variables/fields depending on each other(Data Clumps)
 Extract Data clumps as classes
-TODO - example
+
+Can one be used (makes sense) without the other?
+
+```java
+class DataExport {
+   ...
+   LocalDateTime start;
+   LocalDateTime end;
+   ...
+}
+```
+
+```java
+class Range {
+   private final LocalDateTime start;
+   private final LocalDateTime end;
+
+   public Range(LocalDateTime start, LocalDateTime end) {
+      // validate not null, start before end, etc.
+   }
+}
+
+class DataExport {
+   ...
+   Range range;
+   ...
+}
+```
 
 ## Prefer computation over duplicated data
 
@@ -1146,6 +1198,28 @@ class Order {
 }
 ```
 
+## Make class propertis either nullable or not 
+```java
+class Person {
+   private final String name;
+   private final String address;
+
+   public Person(String name, String address) {
+      Objects.requireNonNull(name);
+      this.name = name;
+      this.address = address;
+   }
+
+   public String getName() { // is never null can return it as is
+      return this.name;
+   }
+
+   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
+      return Optional.ofNullable(this.address)
+   }
+}
+```
+
 ## How to make an immutable class
 ```java
 public final class ImmutableStudent { // prevent inheritance
@@ -1183,7 +1257,6 @@ public final class ImmutableStudent { // prevent inheritance
 * Thread-safe - no synchronisation needed
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
 
-TODO: statuses to inheritance example: e.g. NewOrder -> ApprovedOrder -> DeliveredOrder, etc. This also limits the state representation - having setters gives you infinite num of possible values 
 TODO Limit the state representations (String -> Enum) https://www.youtube.com/watch?v=-lVVfxsRjcY (around 25:00)
 
 ```java
