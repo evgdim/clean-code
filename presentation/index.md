@@ -596,6 +596,8 @@ Don't mix different abstractions in one function:
    }
 ```
 
+Naturally violates SRP!
+
 ## One Level of Indentation per Function
 ```java
 public void myFunction(List<Person> people) {
