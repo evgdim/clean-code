@@ -124,23 +124,6 @@ The biggest problem with code is when it works!
 2. In the scope of a rlatevly big chnage
 3. Before the testing has started
 
-# Docs TODO move it somewehre else
-`README.md` or even a folder full of readmes
-
-* Branching strategy (Git Flow / Trunk based development)
-* How to setup a development environmnt
-   * Databse instalation (scripts should be available in the source control)
-   * Mocks of 3th party systems
-* How to deploy to the different environments
-   * Urls, accounts used, etc
-* Tricky parts of the application
-* Conventions used in the project
-   * `Databse table names should be in plural`
-   * `Rest endpoints should be in plural and represent a resource`
-   * `The database scripts should be placed in folder <project root>/databse`
-
-Document your properties
-
 # Sonarqube
 https://www.sonarqube.org/
 
@@ -248,6 +231,24 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 +}
 
 ```
+
+> ## Offtopic Mental mapping -  Document things that have to be known
+>
+> Document it once or explain it 100 times.
+>
+> `README.md` or even a folder full of readmes
+> 
+> * Branching strategy (Git Flow / Trunk based development)
+> * How to setup a development environmnt
+>    * Databse instalation (scripts should be available in the source control)
+>    * Mocks of 3th party systems
+> * How to deploy to the different environments
+>    * Urls, accounts used, etc
+> * Tricky parts of the application
+> * Conventions used in the project
+>    * `Databse table names should be in plural`
+>    * `Rest endpoints should be in plural and represent a resource`
+>    * `The database scripts should be placed in folder <project root>/databse`
 
 ## Avoid Magic Numbers, Magic String, etc.
 Use named constants, extract variabled or methods to express your intention
@@ -378,6 +379,8 @@ Declare variables as close to the place that they are used as possible.
 
 A value without context does not really matter. That's why it's important to name variables and use the right data structures.
 
+## Limit the state representation
+
 The primitive types usually does not enforse the context.
 Prefer types with more expressive values!
 
@@ -420,7 +423,6 @@ class BranchCustomer extends Customer{
 }
 ```
 
-TODO some comments
 ```java
 class RefreshPolicy { //has 4294967296 * 4294967296 = 1.8446744e+19 possible states
    int size;
@@ -991,6 +993,8 @@ Try<String> tryDivide = devide(1, 5)
 
 ## Keep logic in it's domain
 
+TODO https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00 - procedural vs OOP - move to a different section
+
 If a particular variable/field has a behavior related to it - extract class.
 
 ```java
@@ -1225,13 +1229,15 @@ class Person {
 public final class ImmutableStudent { // prevent inheritance
    private final int id;             // fields are final
    private final String name;
-   private final Dissertation dissertation;        
+   private final Dissertation dissertation;
+   private final List<UniversityClass> classes;        
       
    //fileds are set only in constructor or a factory menthod
-   public ImmutableStudent(int id, String name, Dissertation dissertation) { 
+   public ImmutableStudent(int id, String name, Dissertation dissertation, List<UniversityClass> classes) { 
       this.name = name;
       this.id = id;
       this.dissertation = dissertation;
+      this.classes = classes;
    }
    public int getId() { // there are getters but no setters
       return id;
@@ -1243,7 +1249,12 @@ public final class ImmutableStudent { // prevent inheritance
    public Dissertation getDissertation() { 
       return dissertation.clone();
    } 
-   //TODO add unmodifiable collecttion getter
+
+   // prevent someone adding or deeting from the list
+   public List<UniversityClass> getClasses() {
+      return Collections.unmodifiableList(this.classes);
+   }
+
    // to mutate an immutable object - copy it
    public ImmutableStudent withName(String name) { 
       return new ImmutableStudent(this.id, name, this.dissertation);
@@ -1257,15 +1268,13 @@ public final class ImmutableStudent { // prevent inheritance
 * Thread-safe - no synchronisation needed
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
 
-TODO Limit the state representations (String -> Enum) https://www.youtube.com/watch?v=-lVVfxsRjcY (around 25:00)
-
 ```java
 public abstract class Order {
     protected final LocalDateTime orderDate;
-    protected final List<String> items;
+    protected final List<OrderItem> items;
     protected final String client;
 
-    public Order(LocalDateTime orderDate, List<String> items, String client) {
+    private Order(LocalDateTime orderDate, List<OrderItem> items, String client) {
         Objects.requireNonNull(orderDate);
         Objects.requireNonNull(items);
         Objects.requireNonNull(client);
@@ -1273,17 +1282,15 @@ public abstract class Order {
         this.items = items;
         this.client = client;
     }
-
-    //TODO factory method
-    //TODO calculate total price
+    
 }
 
 class NewOrder extends Order {
-    public NewOrder(LocalDateTime orderDate, List<String> items, String client) {
+    public NewOrder(LocalDateTime orderDate, List<OrderItem> items, String client) {
         super(orderDate, items, client);
     }
 
-    public void addItem(String item) {
+    public void addItem(OrderItem item) {
         // all kind of business validation can be added here
         // logic related to adding of item can be added here - e.g. if the item already exists - increase the count
         this.items.add(item);
@@ -1309,7 +1316,7 @@ class ProcessedOrder extends NewOrder {
     protected final LocalDateTime sentToCourierAt; // should be extracted as a class
     protected final String courierName;
 
-    public ProcessedOrder(LocalDateTime orderDate, List<String> items, String client, LocalDateTime sentToCourierAt, String courierName) {
+    public ProcessedOrder(LocalDateTime orderDate, List<OrderItem> items, String client, LocalDateTime sentToCourierAt, String courierName) {
         super(orderDate, items, client);
         Objects.requireNonNull(courierName);
         Objects.requireNonNull(sentToCourierAt);
@@ -1318,12 +1325,12 @@ class ProcessedOrder extends NewOrder {
     }
 
     @Override
-    public void addItem(String item) {
+    public void addItem(OrderItem item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeItem(String item) {
+    public void removeItem(OrderItem item) {
         throw new UnsupportedOperationException();
     }
 
@@ -1336,7 +1343,7 @@ class CanceledOrder extends NewOrder {
     private final LocalDateTime canceledOn;
     private final String cancelReason;
 
-    public CanceledOrder(LocalDateTime orderDate, List<String> items, String client, LocalDateTime canceledOn, String cancelReason) {
+    public CanceledOrder(LocalDateTime orderDate, List<OrderItem> items, String client, LocalDateTime canceledOn, String cancelReason) {
         super(orderDate, items, client);
         Objects.requireNonNull(canceledOn);
         Objects.requireNonNull(cancelReason);
@@ -1345,12 +1352,12 @@ class CanceledOrder extends NewOrder {
     }
 
     @Override
-    public void addItem(String item) {
+    public void addItem(OrderItem item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeItem(String item) {
+    public void removeItem(OrderItem item) {
         throw new UnsupportedOperationException();
     }
 }
@@ -1358,7 +1365,7 @@ class CanceledOrder extends NewOrder {
 class DeliveredOrder extends ProcessedOrder {
     private final LocalDateTime deliveredOn;
 
-    public DeliveredOrder(LocalDateTime orderDate, List<String> items, String client, LocalDateTime sentToCourierAt, String courierName, LocalDateTime deliveredOn) {
+    public DeliveredOrder(LocalDateTime orderDate, List<OrderItem> items, String client, LocalDateTime sentToCourierAt, String courierName, LocalDateTime deliveredOn) {
         super(orderDate, items, client, sentToCourierAt, courierName);
         Objects.requireNonNull(deliveredOn);
         this.deliveredOn = deliveredOn;
@@ -1386,7 +1393,7 @@ class NoOrderItemsException extends RuntimeException {
 public class Main {
     public static void main(String[] args) {
         NewOrder order = new NewOrder(LocalDateTime.now(), new ArrayList<>(), "some client");
-        order.addItem("some item");
+        order.addItem(new OrderItem("some item"));
         ProcessedOrder processedOrder = order.process(LocalDateTime.now(), "courier");
         DeliveredOrder deliveredOrder = processedOrder.deliver(LocalDateTime.now());
         System.out.println(deliveredOrder);
@@ -1470,29 +1477,30 @@ This doesent tell much about the project itself. It's pretty generic.
    * services
    * views
 
-This expresses the meaning of the project - it's an application that manages *orders*, made by *customers*, which can also *pay* for their orders and all this can be summarized by a bunch of reports. 
+This expresses the meaning of the project - it's an application that manages *orders*, made by *customers*, which can also *pay* for their orders and all this can be summarized by a bunch of *reports*. 
 * src/main/java
    * customers
    * orders
    * payments
    * reporting
 
-
-
-TODO: Desing a class or module like a library.
-System of systems
-visibility default is package
-https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00 - procedural vs OOP - move to a different section
-
 ## Wrap 3th party librabries
 * Minimize your dependencies upon it: You can choose to move to a different library in the future. 
 * Makes it easier to mock out third-party calls when you are testing your own code.
 
 ### make each class or member as inaccessible as possible
-TODO Create an interface that returns private classes that are not visible
+Use package-private  as much as possible
+Expose only the functionality that has to be exposed
 
-### Ensure clear interfaces between components - Interfaces and function arguments should be cohesive enough
-
+* src/main/java
+   * authentication
+      * public Authentication.class
+         * public factoryMethod: ldap(String ldapUrl)
+         * public factoryMethod: database(String connectionString)
+         * public method: authenticate(username)
+      * package private LdapAuthentication.class
+      * package privtae DatabaseAuthentication.class
+      * package private AuthenticationAuditLogger.class
 
 ## The I in SOLID
 Interfaces
@@ -1543,7 +1551,7 @@ Function Arguments
 A module or class should have responsibility over a single part of the functionality provided by the software.
 A class or module should have one, and only one, reason to be changed.
 
-TODO add some comments - https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
+https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
 
 ```C#
 class User 
@@ -1569,7 +1577,7 @@ class User
 ## Solution
 ```C#
 class Post {
-    private ErrorLogger errorLogger = new ErrorLogger();
+    private ErrorLogger errorLogger; // injected
     void CreatePost(Database db, string postMessage) {
         try {
             db.Add(postMessage);
