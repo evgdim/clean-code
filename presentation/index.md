@@ -21,7 +21,6 @@ Get the unique surnames in uppercase of the first 15 book authors that are 50 ye
 }
 ```
 
-# The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
 
@@ -43,7 +42,6 @@ for (Author author : authors) {
 }
 ```
 
-# The author's names task
 ```java
 List<String> authrNames = books.stream()
                 .map(book -> book.getAuthor())
@@ -55,7 +53,6 @@ List<String> authrNames = books.stream()
                 .collect(toList()); 
 ```
 
-# The author's names task
 ```java
 List<String> authrNames = books.stream()
                 .map(book -> book.getAuthor())
@@ -68,7 +65,6 @@ List<String> authrNames = books.stream()
                 .collect(toList()); 
 ```
 
-# The author's names task
 ```java
 List<Author> authors = new ArrayList<>();
 
