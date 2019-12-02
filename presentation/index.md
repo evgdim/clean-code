@@ -28,7 +28,7 @@ for (Book book : books) {
    Author author = book.getAuthor(); 
    if(author.getAge() > 50){
          authors.add(author);
-         if(authors.size() > 15) 
+         if(authors.size() == 15) 
             break;
    }
 }
@@ -36,7 +36,7 @@ for (Book book : books) {
 List<String> result = new ArrayList<>();
 for (Author author : authors) {
    String name = author.getSurname().toUpperCase();
-   if(result.contains(name)) {
+   if(!result.contains(name)) {
          result.add(name);
    }
 }
@@ -85,25 +85,23 @@ for (Author author : authors) {
    }
 }
 ```
-
 # Overview
-## Questions to answer
-* Is code easy to read?
-* Is code easy to unit test? Code that is easy to test is easy to reason about.
-* Is code easy to reason?
-* Is application easy to deploy?
-* Is it easy to find bugs and chnage functionality?
 
-# Overview
+## Why it's important
+
+* For Developers - reduces time to fix bugs and implemnt new features. Reduces headaches.
+* For Clients - reduces time to market. Reduces time to bring the system back online.
+* For Managment - see above
 
 ## The start defines the end
 
 If the foundation is weak the rest cannot be solid.
 ```
-   *********
+      *******
     ***
       **
       *
+   ********
 ```
 
 Broken window principle.
@@ -116,9 +114,14 @@ Broken window principle.
 ## When to reafactor
 The biggest problem with code is when it works!
 
-1. Right after the code is working and the unit tests are done
-2. In the scope of a rlatevly big chnage
-3. Before the testing has started
+1. Right after the code is working and the unit tests are done.
+2. In the scope of a rlatevly big change.
+3. Before the testing has started.
+
+## Questions to answer
+* Is code easy to read?
+* Is code easy to unit test? Code that is easy to test is easy to reason about.
+* Is it easy to find bugs and chnage functionality?
 
 # Sonarqube
 https://www.sonarqube.org/
@@ -199,7 +202,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 -   }
 -   return -1;
 -}
-+int binarySearch(int arr[], int leftIndex, int rightIndex, int +keyToFind) {
++int binarySearch(int arr[], int leftIndex, int rightIndex, int keyToFind) {
 +   if (rightIndex >= leftIndex) {
 +       int mid = leftIndex + (rightIndex - leftIndex) / 2;
 +       if (arr[mid] == keyToFind)
@@ -297,8 +300,8 @@ List<Cell> getFlaggedCells() {
 
 ## Extract variable when it makes the code more readable 
 ```diff
--if(context.getAttribute("TEST_MODE")) {...}
-+boolean isTestMode = context.getAttribute("TEST_MODE");
+-if(context.getAttribute("TEST_FLAG")) {...}
++boolean isTestMode = context.getAttribute("TEST_FLAG");
 +if(isTestMode) {...}
 ```
 Stick to expressions when they could be read as a sentence
@@ -314,6 +317,7 @@ Avoid prefixing member variables with “m_” . Your classes and functions shou
 
 ## Class names
 Class name should be noun
+
 Single Responsibility Principle - SRP tells us that a class should have only one reason to change. The name of a class should explain this reason.
 
 Avoid pre/postfixes that doesn't realy mean much:
@@ -331,7 +335,7 @@ Instead: `DashboardSummaryOrderInfo` or `DataWarehouseOrderDetails`
 Try to prefix names, mesages and descriptions with an issue identifier if the code change is related.
 
 <pre>
-git commit -m"<b>DATAJPA-245</b> Support upsert operations in CRUD repository"
+git commit -m"<b>SOMEPROJECT-245</b> Support upsert operations in CRUD repository"
 </pre>
 
 ## Don't get naming paralysis (or any paralysis in that matter). 
@@ -341,22 +345,9 @@ Yes, names are very important but they're not important enough to waste huge amo
 ## Naming to general skills mapping:
 * Consistent
 * Organized
-* Self management
-* Responisbility
+* Responisbe
 * Communicate it with others
-* Tell the TRUTH
-
-## Take Responsibility
-Take responsibility for your mistakes and try to fix them. 
-Don't make excuses! Don't blame someone else!  Propose solutions instead.
-"Just ask questions and remember that nobody knows what he/she is doing" - You're not responsible for not knowing something at a given point of time, but you have to take action to learn that thing.
-Before asking a question:
-* Think about all resources that you have access to. Can you find the answer there?
-* Prepare your question - provide enough context. Stackoverflow is good way to learn to ask questions - "Off topic", "Too broad", "What have you tried?"
-
-### Pick your poison - do something and make a mistake or do nothing and make a mistake.
-
-## Don't Live with Broken Windows
+* Tell the Truth
 
 # Variables
 ## Minimize the scope of variables
