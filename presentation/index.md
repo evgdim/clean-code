@@ -315,6 +315,24 @@ Avoid prefixing member variables with “m_” . Your classes and functions shou
 ## Avoid abriviations, unless they are common and well known (HTTP, EGN, EIK, etc.)
 ## Avoid terms and metaphores that are hard for other to understand
 
+## Be consistent with the naming
+
+```java
+interface CustomerRepository {
+   long save(Customer customer);
+   Optional<Customer> findById(long id);
+}
+```
+
+```java
+interface OrderRepository {
+   long insert(Order order);
+   Optional<Order> get(long id);
+}
+```
+
+Both `save` and `insert` a good names but having them both in one project will make others wonder if they do the same thing.
+
 ## Class names
 Class name should be noun
 
@@ -351,16 +369,11 @@ Yes, names are very important but they're not important enough to waste huge amo
 
 # Variables
 ## Minimize the scope of variables
-Global variables that are immutable/constants are OK.
-Avoid global variables that are written by one entity and read by many.
-AVOID global variables that mutated by multiple entities (e.g. `public static` variable that is not final ).
+* Global variables that are immutable/constants are OK.
+* Avoid global variables that are written by one entity and read by many.
+* AVOID global variables that mutated by multiple entities (e.g. `public static` variable that is not final ).
 
 Declare variables as close to the place that they are used as possible.
-
-
-# Variables
-
-# State
 
 ## Limit the state representation
 
@@ -519,8 +532,6 @@ OrdersSummary calculateOrdersSummary(List<Order> orders) {
    return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
 }
 ```
-
-
 # Functions
 
 
@@ -598,7 +609,6 @@ public void myFunction(List<Person> people) {
 }
 ```
 
-## Refactoring Demo =>
 
 ## Prefer clean code over clever code.
 Prefer code that expresses the desired behavior over code that shorter/hacky.
@@ -626,10 +636,6 @@ boolean isStatusError(Response response) {
    return null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
 }
 ```
-
-# Functions
-## Use Descriptive Names
-Fully describe what the function does in it's name. 
 
 
 ## Function Arguments
@@ -690,13 +696,13 @@ Optional<Person> findByName(String name) {
 }
 ```
 
-
 ## Functions either return the value that they are mean to produce or throw an error (or return Try monad)
 ## void functions either complete successfully or throw an error (or return Try monad)
 
 ## Don't return NULL to "express" that something went wrong.
 ## Don't return a "message" to tell if the function has complete successfully or something went wrong.
-## Minimize the number of `return`s in a function.
+
+## Refactoring Demo =>
 
 # Side Effects
 
@@ -783,14 +789,7 @@ Try to split functions to one pure function and up to two(input and output) impu
 
 ```java
 class OrdersService {
-   private final OrdersRepository ordersRepository;
-   private final AuditLogRepository auditLogRepository;
-   private final InventoryGateway inventoryGateway;
-   OrdersService(OrdersRepository ordersRepository, InventoryGateway inventoryGateway, AuditLogRepository auditLogRepository) {
-      this.ordersRepository = ordersRepository;
-      this.inventoryGateway = inventoryGateway;
-      this.auditLogRepository = auditLogRepository;
-   }
+   ...
    
    void processOrder(Long orderId) {
       Order order = this.ordersRepository.getById(orderId);                                                 //side effect (input) no business logic allowed
@@ -827,12 +826,21 @@ strings.stream()
 # Error Handling
 
 ## Don't ignore exceptions! In the rear cases when this is needed - add a comment.
+"Something does not work and we don't know why" - situation.
+
+```java
+try {
+   ...
+} catch(Exception e) {
+   e.printStackTrace(); // NEVER
+}
+```
 ## At least log them. 
 
 ## Use Exceptions Rather Than Return Codes
 
 ## Catch or Pass 
-### Catch exceptions only if you know what to do with them. Else let them "buble up" and show them to the caller (or not).
+### Catch exceptions only if you know what to do with them. Else let them "buble up".
 
 ```java
 @ControllerAdvice
