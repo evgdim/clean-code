@@ -362,32 +362,20 @@ Declare variables as close to the place that they are used as possible.
 
 # State
 
-## True or False
-
-A value without context does not really matter. That's why it's important to name variables and use the right data structures.
-
 ## Limit the state representation
 
 The primitive types usually does not enforse the context.
 Prefer types with more expressive values!
 
 ```java
-abstract class Customer {
-   private String phone;
-}
-
-class BranchCustomer extends Customer{
+class BranchCustomer {
    private String branchId;
    private String customerNumber;
-}
-
-class PotentialClient extends Customer{
-   
 }
 ```
 
 ```java
-class BranchCustomer extends Customer{
+class BranchCustomer {
    private String branchId; // can be "615", but also can be "Beer" or "zimbabwe"
    private String customerNumber;
 }
@@ -465,7 +453,7 @@ order.setStatus("I still can set whatever string I want here");// ???
 ```
 
 ## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
-* Make all variables and class properties constants 
+* Make all variables and class properties final untill you need them to be mutable 
 * don't add setters in a class untill you need it
 * don't add getters in a class untill you need it
 ```diff
@@ -498,7 +486,7 @@ class OrdersSummary {
 ```
 
 ```java
-OrdersSummary clculateOrdersSummary(List<Order> orders) {
+OrdersSummary calculateOrdersSummary(List<Order> orders) {
    BigDecimal totalPrice = BigDecimal.ZERO;              // for small methods it's not a Biggie, but for big methods it get very bad
    int toatalNumberOfOrders = 0;
    List<String> allErrors = new ArrayList<>();
@@ -516,7 +504,7 @@ OrdersSummary clculateOrdersSummary(List<Order> orders) {
 ```
 
 ```java
-OrdersSummary clculateOrdersSummary(List<Order> orders) {
+OrdersSummary calculateOrdersSummary(List<Order> orders) {
    int toatalNumberOfOrders = orders.size();
 
    BigDecimal totalPrice = orders.stream()
