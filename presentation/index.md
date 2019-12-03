@@ -978,7 +978,45 @@ Try<String> tryDivide = devide(1, 5)
 
 ## Keep logic in it's domain
 
-TODO https://www.youtube.com/watch?v=MEySjYD86PQ  - addToOrder code from 23:00 - procedural vs OOP - move to a different section
+Prefer OOP over procedural code
+
+Procedural code
+```java
+class OrderService {
+
+   public void addProductToOrder(Order order, Product product, int amount) {
+      Optional<OrderItem> item = order.getItems().stream()
+         filter(item -> item.getId().equals(product.getId()))
+         findFirst();
+
+      if(item.isPresent()) { // if this or similar logic is needed somewhere else - it will have to be duplicated
+         item.get().increaseQuantityBy(amount);  
+      } else {
+         order.getItems().add(new OrderItem(product, amount));
+      }
+   }
+}
+```
+
+OOP
+```java
+class Order {
+   private List<OrderItem> items;
+   ...
+
+   public void addProduct(Product product, int amount) { // encapsulate the Order class, so this is the only way to add product
+      Optional<OrderItem> item = items.stream()
+         filter(item -> item.getId().equals(product.getId()))
+         findFirst();
+
+      if(item.isPresent()) {
+         item.get().increaseQuantityBy(amount);  
+      } else {
+         order.getItems().add(new OrderItem(product, amount));
+      }
+   }
+}
+```
 
 If a particular variable/field has a behavior related to it - extract class.
 
