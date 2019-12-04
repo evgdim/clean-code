@@ -2,89 +2,6 @@
 <center>Evgeni Dimitrov</center>
 
 
-# The author's names task
-
-Get the unique surnames in uppercase of the first 15 book authors that are 50 years old or older.
-
-```
-{
-   books: [
-      {
-         bookName: "Doesn't really matter"
-         author: {
-            age: 45,
-            surname: "SomeSurname"
-         }
-      },
-      ...
-   ]
-}
-```
-
-```java
-List<Author> authors = new ArrayList<>();
-
-for (Book book : books) {
-   Author author = book.getAuthor(); 
-   if(author.getAge() > 50){
-         authors.add(author);
-         if(authors.size() == 15) 
-            break;
-   }
-}
-
-List<String> result = new ArrayList<>();
-for (Author author : authors) {
-   String name = author.getSurname().toUpperCase();
-   if(!result.contains(name)) {
-         result.add(name);
-   }
-}
-```
-
-```java
-List<String> authrNames = books.stream()
-                .map(book -> book.getAuthor())
-                .filter(author -> author.getAge() > 50)
-                .limit(15)
-                .map(Author::getSurname)
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(toList()); 
-```
-
-```java
-List<String> authrNames = books.stream()
-                .map(book -> book.getAuthor())
-                .filter(author -> author.getAge() > 50)
-                .distinct()                                // <=
-                .limit(15)
-                .map(Author::getSurname)
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(toList()); 
-```
-
-```java
-List<Author> authors = new ArrayList<>();
-
-for (Book book : books) {
-   Author author = book.getAuthor();
-   if(author.getAge() > 50 && !authors.contains(author)){         // <=
-         authors.add(author);
-         if(authors.size() > 15) 
-            break;
-   }
-}
-
-List<String> result = new ArrayList<>();
-for (Author author : authors) {
-   String name = author.getSurname().toUpperCase();
-   if(result.contains(name)) {
-         result.add(name);
-   }
-}
-```
 # Overview
 
 ## Why it's important
@@ -249,6 +166,17 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 >    * `Rest endpoints should be in plural and represent a resource`
 >    * `The database scripts should be placed in folder <project root>/databse`
 
+## Extract variable when it makes the code more readable 
+```diff
+-if(context.getAttribute("TEST_FLAG")) {...}
++boolean isTestMode = context.getAttribute("TEST_FLAG");
++if(isTestMode) {...}
+```
+Stick to expressions when they could be read as a sentence
+```java
+if(type.startsWith("BASIC_")) {...}
+```
+
 ## Avoid Magic Numbers, Magic String, etc.
 Use named constants, extract variabled or methods to express your intention
 ```java
@@ -296,17 +224,6 @@ List<Cell> getFlaggedCells() {
             .filter(cell -> cell.isFlagged())
             .collect(toList());
 }
-```
-
-## Extract variable when it makes the code more readable 
-```diff
--if(context.getAttribute("TEST_FLAG")) {...}
-+boolean isTestMode = context.getAttribute("TEST_FLAG");
-+if(isTestMode) {...}
-```
-Stick to expressions when they could be read as a sentence
-```java
-if(type.startsWith("BASIC_")) {...}
 ```
 
 ## Avoid member prefixes
@@ -359,13 +276,13 @@ git commit -m"<b>SOMEPROJECT-245</b> Support upsert operations in CRUD repositor
 ## Don't get naming paralysis (or any paralysis in that matter). 
 Yes, names are very important but they're not important enough to waste huge amounts of time on. If you can't think up a good name in 10 minutes, move on.
 
-# HIDDEN CHAPTER - Generl skills
-## Naming to general skills mapping:
-* Consistent
-* Organized
-* Responisbe
-* Communicate it with others
-* Tell the Truth
+> # HIDDEN CHAPTER - Generl skills
+> ## Naming to general skills mapping:
+> * Consistent
+> * Organized
+> * Responisbe
+> * Communicate it with others
+> * Tell the Truth
 
 # Variables
 ## Minimize the scope of variables
@@ -374,6 +291,52 @@ Yes, names are very important but they're not important enough to waste huge amo
 * AVOID global variables that mutated by multiple entities (e.g. `public static` variable that is not final ).
 
 Declare variables as close to the place that they are used as possible.
+
+## Avoid Accomulator variables
+
+```java
+class OrdersSummary {
+   BigDecimal totalPrice;
+   int toatalNumberOfOrders;
+   List<String> allErrors;
+   ...
+}
+```
+
+```java
+OrdersSummary calculateOrdersSummary(List<Order> orders) {
+   BigDecimal totalPrice = BigDecimal.ZERO;              // for small methods it's not a Biggie, but for big methods it get very bad
+   int toatalNumberOfOrders = 0;
+   List<String> allErrors = new ArrayList<>();
+
+   for (Order order : orders) {                          // this violates SRP -> separating this into 3 loops doin one thing is still better
+      totalPrice = totalPrice.add(order.getPrice);
+      toatalNumberOfOrders++;
+      if(order.getDelivery().isFailed()) {
+         allErrors.add(order.getDelivery().getFailReason());
+      }
+   }
+
+   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
+}
+```
+
+```java
+OrdersSummary calculateOrdersSummary(List<Order> orders) {
+   int toatalNumberOfOrders = orders.size();
+
+   BigDecimal totalPrice = orders.stream()
+                                 .map(order -> order.getPrice())
+                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+   List<String> allErrors = orders.stream()
+                                  .filter(order -> order.getDelivery().isFailed())
+                                  .map(order -> order.getDelivery().getFailReason())
+                                  .collect(toList());
+
+   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
+}
+```
 
 ## Limit the state representation
 
@@ -487,51 +450,6 @@ order.setStatus("I still can set whatever string I want here");// ???
 +}
 ```
 
-## Avoid Accomulator variables
-
-```java
-class OrdersSummary {
-   BigDecimal totalPrice;
-   int toatalNumberOfOrders;
-   List<String> allErrors;
-   ...
-}
-```
-
-```java
-OrdersSummary calculateOrdersSummary(List<Order> orders) {
-   BigDecimal totalPrice = BigDecimal.ZERO;              // for small methods it's not a Biggie, but for big methods it get very bad
-   int toatalNumberOfOrders = 0;
-   List<String> allErrors = new ArrayList<>();
-
-   for (Order order : orders) {                          // this violates SRP -> separating this into 3 loops doin one thing is still better
-      totalPrice = totalPrice.add(order.getPrice);
-      toatalNumberOfOrders++;
-      if(order.getDelivery().isFailed()) {
-         allErrors.add(order.getDelivery().getFailReason());
-      }
-   }
-
-   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
-}
-```
-
-```java
-OrdersSummary calculateOrdersSummary(List<Order> orders) {
-   int toatalNumberOfOrders = orders.size();
-
-   BigDecimal totalPrice = orders.stream()
-                                 .map(order -> order.getPrice())
-                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-   List<String> allErrors = orders.stream()
-                                  .filter(order -> order.getDelivery().isFailed())
-                                  .map(order -> order.getDelivery().getFailReason())
-                                  .collect(toList());
-
-   return new OrdersSummary(totalPrice, toatalNumberOfOrders, allErrors);
-}
-```
 # Functions
 
 
