@@ -48,8 +48,6 @@ https://www.sonarqube.org/
 
 # Names
 
-## True or False ?
-
 ## Names provide context
 
 ```java
