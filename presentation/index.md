@@ -471,8 +471,8 @@ THEY SHOULD DO IT ONLY.**
 Don't mix different abstractions in one function:
 * business logic
 * data access
-* string concatenation
 * http/server stuff
+* working with byte buffers, output/input streams, etc
 
 ```java
    public String someFunction() {
@@ -516,11 +516,6 @@ public void myFunction(List<Person> people) {
 }
 ```
 
-
-## Prefer clean code over clever code.
-Prefer code that expresses the desired behavior over code that shorter/hacky.
-Prefer cean code over performant code, if it's not IO intensive.
-
 ## Reading Code from Top to Bottom: The Stepdown Rule
 ```java
 if (null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
@@ -547,23 +542,17 @@ boolean isStatusError(Response response) {
 
 ## Function Arguments
 
-### Good
-* No arguments - niladic
-* Single argument - monadic
-* Two arguments - dyadic
-* Three arguments - triadic
-### Bad
+### Avoid output argumnets and in general avoid modifying arguments
+* Arguments -> for input 
+* Returning object -> for output
 
+`f(x) = y`
 
-## Avoid output argumnets and in general avoid modifying arguments
-Arguments -> for input 
-Returning object -> for output
-
-## Try to keep the arguments on the same level of abstraction as the function
+### Try to keep the arguments on the same level of abstraction as the function
 ```java
 Overdraft calculateOverdraftLimitForClient(Client client, ByteArraysOutputStram transactionsFile); //not OK
 ```
-## Avoid boolean parameters
+### Avoid boolean parameters
 * function does more than one thing and violates SPR 
 * makes the call hard to read 
 ```java
@@ -571,7 +560,7 @@ activateUser(user, true); //what does true mean here??`
 ```
 * often happens to big old functions that have to change 
 
-## Consider wrapping some of the function arguments in a class when appropriate
+### Consider wrapping some of the function arguments in a class when appropriate
 ```diff
 -Circle makeCircle(double x, double y, double radius);
 +Circle makeCircle(Point center, double radius);
@@ -579,7 +568,7 @@ activateUser(user, true); //what does true mean here??`
 Always search for the occurance of the same params that are extracted, to be able to replace them with the new class.
 The logic related to this parameters will move to the new class.
 
-## Check the input parameters - fail as fast as possible
+### Check the input parameters - fail as fast as possible
 ```java
 BigDecimal devide(Integer divident, Integer divisor) {
    Objects.requireNonNull(divident);
@@ -594,7 +583,7 @@ BigDecimal devide(Integer divident, Integer divisor) {
 
 Any method returning void is either meaningless or operates through side-effects, such as writing to display, network, file or database
 
-## Don't return null
+### Don't return null
 Use Optional to express that the function can return null value
 
 ```java
@@ -603,11 +592,11 @@ Optional<Person> findByName(String name) {
 }
 ```
 
-## Functions either return the value that they are mean to produce or throw an error (or return Try monad)
-## void functions either complete successfully or throw an error (or return Try monad)
+### Functions either return the value that they are mean to produce or throw an error 
+### void functions either complete successfully or throw an error
 
-## Don't return NULL to "express" that something went wrong.
-## Don't return a "message" to tell if the function has complete successfully or something went wrong.
+### Don't return NULL to "express" that something went wrong.
+### Don't return a "message" to tell if the function has complete successfully or something went wrong.
 
 ## Refactoring Demo =>
 
