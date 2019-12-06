@@ -280,9 +280,9 @@ Yes, names are very important but they're not important enough to waste huge amo
 > ## Naming to general skills mapping:
 > * Consistent
 > * Organized
-> * Responisbe
 > * Communicate it with others
 > * Tell the Truth
+> * Responisbe
 
 # Variables
 ## Minimize the scope of variables
@@ -338,17 +338,29 @@ OrdersSummary calculateOrdersSummary(List<Order> orders) {
 }
 ```
 
+## Choose the right type of variable
+* For finite number of values use enums (e.g. Statuses)
+* Don't use numberic types for variables that are not to be used in aritmetic operations
+
+```java
+String customerNumberString = "0123123";
+int customerNumber = Integer.parseInt(customerNumberString);
+System.out.println(customerNumber);// => 123123 
+//you lose the 0. It's a wrong representation of the customer number even if the customer number is a number
+```
+
+* Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
+```java
+   Map<String, Object> person = new HashMap<>();
+   person.put("firstName", "Michael");
+   person.put("lastName", "Jordan");
+   return person;
+```
+
 ## Limit the state representation
 
 The primitive types usually does not enforse the context.
 Prefer types with more expressive values!
-
-```java
-class BranchCustomer {
-   private String branchId;
-   private String customerNumber;
-}
-```
 
 ```java
 class BranchCustomer {
@@ -420,36 +432,6 @@ order.setStatus(STATUS_ACTIVE);
 order.setStatus("I still can set whatever string I want here");// ???
 ```
 
-* Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
-```java
-   Map<String, Object> person = new HashMap<>();
-   person.put("firstName", "Michael");
-   person.put("lastName", "Jordan");
-   return person;
-```
-
-## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
-* Make all variables and class properties final untill you need them to be mutable 
-* don't add setters in a class untill you need it
-* don't add getters in a class untill you need it
-```diff
-//we need the number of items cheaper than 10€ in an order
--order.getItems().stream()
--   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
--   .count();
-
-+class Order {
-+   ...
-+   private List<OrderItem> items;
-+
-+   public List<OrderItem> getNumberOfCheapItems() {
-+      return this.items.stream()
-+     .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
-+     .count();
-+   }
-+}
-```
-
 # Functions
 
 
@@ -471,6 +453,15 @@ You should be able to explain what a function does in no more than 20 words with
 
 Don't use a `{}` for lambdas!
 
+```diff
+-items.forEach(item -> {
+-   ...
+-   //20 lines of code
+-   ...
+-});
+
++items.forEach(item -> processItem(item));
+```
 
 ## Do one thing
 
@@ -655,8 +646,6 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 }
 ```
 
-## Caching should be easily turned off
-
 ## Pure functions
 
 1. The function does not chnage anything
@@ -665,19 +654,6 @@ public void getDaysToNewYear_shouldReturn2_for29December() {
 ```java
 int doubleIt(int number) {
    return number * 2;
-}
-```
-
-```java
-int multiplyIt(int number, int factor) {
-   return number * factor;
-}
-```
-
-```java
-int factor = 3;
-int multiplyIt(int number) { //TODO add comments
-   return number * factor;
 }
 ```
 
@@ -720,26 +696,6 @@ class OrdersService {
    }
 }
 ```
-
-## Jva Streams best practices
-* Avoid passing streams around, pass collections
-* Don't mutate data in a stream (in peek and forEach)
-* Don't throwing exceptions in streams - use either or Try monad
-* One stream method call per line
-```java
-// BAD CODE:
-strings.stream().filter(s -> s.length() > 2).sorted()
-	.map(s -> s.substring(0, 2)).collect(Collectors.toList());
-```
-```java
-// GOOD CODE:
-strings.stream()
-	.filter(s -> s.length() > 2)
-	.sorted()
-	.map(s -> s.substring(0, 2))
-	.collect(Collectors.toList());
-```
-* Use `IntStream`, `LongStream` and `DoubleStream` when working with primitive types. They are faster (they avoid boxing) and easier to use (they add useful methods like sum)
 
 # Error Handling
 
@@ -896,6 +852,54 @@ Try<String> tryDivide = devide(1, 5)
 
 ## Keep logic in it's domain
 
+If a particular variable/field has a behavior related to it - extract class.
+
+```java
+String url = ...
+
+boolean isSecure(String url) {
+   return "https".equals(url.substring(0, url.indexOf("://")));
+}
+
+```
+
+```java
+class Url {
+   private final String url;
+   Url(String url) {
+      Objects.requireNonNull(url);//also check if not empty, etc.
+   }
+
+   boolean isSecure() {
+      return "https".equals(this.url.substring(0, url.indexOf("://")));
+   }
+
+   //all other methods related to url will coalesce in this class and not "float" trough various other classes
+}
+```
+
+## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
+* Make all variables and class properties final untill you need them to be mutable 
+* don't add setters in a class untill you need it
+* don't add getters in a class untill you need it
+```diff
+//we need the number of items cheaper than 10€ in an order
+-order.getItems().stream()
+-   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
+-   .count();
+
++class Order {
++   ...
++   private List<OrderItem> items;
++
++   public List<OrderItem> getNumberOfCheapItems() {
++      return this.items.stream()
++     .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
++     .count();
++   }
++}
+```
+
 Prefer OOP over procedural code
 
 Procedural code
@@ -933,32 +937,6 @@ class Order {
          order.getItems().add(new OrderItem(product, amount));
       }
    }
-}
-```
-
-If a particular variable/field has a behavior related to it - extract class.
-
-```java
-String url = ...
-
-boolean isSecure(String url) {
-   return "https".equals(url.substring(0, url.indexOf("://")));
-}
-
-```
-
-```java
-class Url {
-   private final String url;
-   Url(String url) {
-      Objects.requireNonNull(url);//also check if not empty, etc.
-   }
-
-   boolean isSecure() {
-      return "https".equals(this.url.substring(0, url.indexOf("://")));
-   }
-
-   //all other methods related to url will coalesce in this class and not "float" trough various other classes
 }
 ```
 
