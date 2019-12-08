@@ -353,7 +353,7 @@ System.out.println(customerNumber);// => 123123
    person.put("firstName", "Michael");
    person.put("lastName", "Jordan");
    return person;
-```
+``` 
 
 ## Limit the state representation
 
@@ -364,6 +364,8 @@ Prefer types with more expressive values!
 class BranchCustomer {
    private String branchId; // can be "615", but also can be "Beer" or "zimbabwe"
    private String customerNumber;
+
+   // other fields...
 }
 ```
 
@@ -441,9 +443,9 @@ order.setStatus("I still can set whatever string I want here");// ???
 
 ### Extract method
 Extract method candidates:
-* if - else blocks bigger than X lines
+* `if` - else blocks bigger than X lines
 * loop blocks bigger than X lines
-* try blocks bigger than X lines
+* `try` blocks bigger than X lines
 
 Smaller methods run faster - it's more likely that the JIT compiler will optimize them over big methods
 
@@ -481,8 +483,8 @@ Don't mix different abstractions in one function:
       if(allowedOverdraft.getAmount() < MINIMUM_OVERDRAFT) {
          message.append("amount < MIN ")
       } 
-      Manager manager = jdbcTemplate.query("select * from Managers", new ManagerRowMapper());
-      if(whatever == null) {
+      List<Manager> managers = jdbcTemplate.query("select * from Managers", new ManagerRowMapper());
+      if(managers.isEmpty()) {
          message.append("no manager");
       }
       return message.toString();
@@ -518,24 +520,24 @@ public void myFunction(List<Person> people) {
 
 ## Reading Code from Top to Bottom: The Stepdown Rule
 ```java
-if (null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
-      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.ACCEPTED);
-} else {
+if (null != response && response.getAdvice() != null && response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
       responseEntity = new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+} else {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.OK);
 }
 ```
 
 ```java
 if (isStatusError(response)) {
-      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.OK);
-} else {
       responseEntity = new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+} else {
+      responseEntity = new ResponseEntity<>(response, headers, HttpStatus.OK);
 }
 
 ...
 
 boolean isStatusError(Response response) {
-   return null != response && response.getAdvice() != null && !response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
+   return null != response && response.getAdvice() != null && response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR);
 }
 ```
 
@@ -596,6 +598,18 @@ Optional<Person> findByName(String name) {
 ### void functions either complete successfully or throw an error
 
 ### Don't return NULL to "express" that something went wrong.
+
+```java
+Integer findPersonAge(...) {
+   try {
+      ...
+      return person.getAge();
+   } catch(Exception e) {
+      return null;
+      //return -1;
+   }
+}
+```
 ### Don't return a "message" to tell if the function has complete successfully or something went wrong.
 
 ## Refactoring Demo =>
