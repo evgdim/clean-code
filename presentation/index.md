@@ -713,6 +713,22 @@ try {
 ## At least log them. 
 
 ## Use Exceptions Rather Than Return Codes
+```diff
+-class Result<T> {
+-   private T result;
+-   private Status status; // SUCCESS || ERROR
+-
+-   ...
+-}
+
+-try {
+-   ...
+-   return new Result(functionResult, SUCCESS);
+-} catch(Exception e) {
+-   return return new Result(null, ERROR);
+-}
+
+```
 
 ## Catch or Pass 
 ### Catch exceptions only if you know what to do with them. Else let them "buble up".
@@ -788,66 +804,6 @@ public class SuppressableStacktraceException extends Exception {
     }
 }
 ```
-## Vavr Try and Either
-https://www.vavr.io/vavr-docs/
-
-### Either
-
-Either represents a value of two possible types. An Either is either a Left or a Right.
-```java
-private static Either<ArithmeticException, BigDecimal> devide(int divident, int divisor) {
-   BigDecimal dividentDecimal = BigDecimal.valueOf(divident);
-   BigDecimal divisorDecimal = BigDecimal.valueOf(divisor);
-   return divisor != 0 ?
-            Either.right(dividentDecimal.divide(divisorDecimal)) :
-            Either.left(new ArithmeticException("Devision by zero"));
-}
-
-public static void main(String[] args) {
-   Either<ArithmeticException, BigDecimal> ok = devide(1, 5);
-   Either<ArithmeticException, BigDecimal> error = devide(1, 0);
-
-   Either<ArithmeticException, BigDecimal> mappedOk = ok.map(result -> result.multiply(BigDecimal.TEN));
-   System.out.println(mappedOk); // Right(2)
-
-   Either<ArithmeticException, BigDecimal> mappedError = error.map(result -> result.multiply(BigDecimal.TEN)); //multiply will not be applied
-   System.out.println(mappedError); // Left(ArithmeticException)
-}
-```
-### Try
-```java
-// = Success(result) or Failure(exception)
-Try<Integer> divide(Integer dividend, Integer divisor) {
-    return Try.of(() -> dividend / divisor);
-}
-```
-
-```java
-Try<Response> response = Try.of(() -> ...);
-
-Integer chainedResult = response
-      .map(this::actionThatTakesResponseAndReturnsInt)
-      .getOrElse(defaultChainedResult);
-```
-
-```java
-Try<String> tryDivide = devide(1, 5)
-                .onSuccess(TrySample::log)         //separation of concerns
-                .onFailure(TrySample::sendMail)
-                .map(String::valueOf)               //pure functions
-                .map(String::toUpperCase);         // this will be executed only when the Try is a Success else the error is just propagated
-        System.out.println(tryDivide); //Success(0.2)
-
-//        tryDivide.get();        // don't do that
-//        tryDivide.getCause();   // don't do that
-//
-//        tryDivide.toEither();
-        
-        Try<Integer> tryOfInteger = tryDivide.flatMap(TrySample::someFunnctionThatReturnTry);
-```
-
-`Try` will be supported by Spring declarative transactions since version 5.2 - https://github.com/spring-projects/spring-framework/issues/20361
-
 
 # Objects
 
@@ -885,6 +841,16 @@ class Url {
 * don't add getters in a class untill you need it
 ```diff
 //we need the number of items cheaper than 10€ in an order
+-class Order {
+-   ...
+-   private List<OrderItem> items;
+-
+-   public List<OrderItem> getItems() {
+-      return items;
+-   }
+-}
+-
+-// is some other class
 -order.getItems().stream()
 -   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
 -   .count();
@@ -1016,7 +982,7 @@ account.setStatus(Locked);
 
 
 ```java
-/removing a lock
+//removing a lock
 account.getLocks().remove(lockToRemove);
 if(accounts.getLocks().isEmpty()) {
    account.setStatus(Active);
@@ -1050,6 +1016,28 @@ privateMethod(a, b);
 MyUtils.method(a, b); 
 //-> 
 new MyValueObject(a, b).method()
+```
+
+## Make class propertis either nullable or not 
+```java
+class Person {
+   private final String name;
+   private final String address;
+
+   public Person(String name, String address) {
+      Objects.requireNonNull(name);
+      this.name = name;
+      this.address = address;
+   }
+
+   public String getName() { // is never null can return it as is
+      return this.name;
+   }
+
+   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
+      return Optional.ofNullable(this.address)
+   }
+}
 ```
 
 ## Mutability is the new GOTO
@@ -1095,7 +1083,6 @@ public final class Complex {
    }
 }
 ```
-Immutable objects are inherently thread-safe; they require no synchronization.
 
 ## Reuse common immutable objects (use static factories to cache)
 
@@ -1118,28 +1105,6 @@ class Order {
 
    boolean areAllItemsAvailable(Predicate<OrderItem> isAvailable) { // checking availability is a side effect(e.g. checking in a database) that's why we use higher order function
       return this.items.allMatch(isAvailable)
-   }
-}
-```
-
-## Make class propertis either nullable or not 
-```java
-class Person {
-   private final String name;
-   private final String address;
-
-   public Person(String name, String address) {
-      Objects.requireNonNull(name);
-      this.name = name;
-      this.address = address;
-   }
-
-   public String getName() { // is never null can return it as is
-      return this.name;
-   }
-
-   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
-      return Optional.ofNullable(this.address)
    }
 }
 ```
@@ -1292,6 +1257,16 @@ class DeliveredOrder extends ProcessedOrder {
     }
 
     @Override
+    public void addItem(OrderItem item) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeItem(OrderItem item) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String toString() {
         return "DeliveredOrder{" +
                 "orderDate=" + orderDate +
@@ -1373,9 +1348,6 @@ public class LawOfDemeter {
 }
 ```
 
-
-
-https://www.youtube.com/watch?v=-lVVfxsRjcY (30:00)
 # API/Module design
 
 ## A module, class or function should work correctly by itself and should not depend on the result some other module, class, function or variable
