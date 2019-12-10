@@ -579,6 +579,17 @@ BigDecimal devide(Integer divident, Integer divisor) {
 }
 ```
 
+### Clearly define the interface of the function
+```diff
+-void checkPersonIdentificationNumber(Person person) { //to test the function a whole person is needed
+-   String identNumber = person.getIdentNumber(); //person has a lot more fields
+-   ...
+-}
++void checkPersonIdentificationNumber(String identNumber) {
++   ...
++}
+```
+
 ## Return types
 
 ```void``` is suspicious.
@@ -1360,6 +1371,10 @@ void someFunction(Order order) { //This is a bad code!!!
 }
 ```
 
+## Wrap 3th party librabries
+* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
+* Makes it easier to mock out third-party calls when you are testing your own code.
+
 ## The structure of the project should express the meaning of the project
 
 This doesent tell much about the project itself. It's pretty generic.
@@ -1376,11 +1391,7 @@ This expresses the meaning of the project - it's an application that manages *or
    * payments
    * reporting
 
-## Wrap 3th party librabries
-* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
-* Makes it easier to mock out third-party calls when you are testing your own code.
-
-### make each class or member as inaccessible as possible
+## Make each class or member as inaccessible as possible
 Use package-private  as much as possible
 Expose only the functionality that has to be exposed
 
@@ -1423,18 +1434,6 @@ public interface PersonService extends PersonReader, PersonPersister {
    
 }
 ```
-
-Function Arguments
-```diff
--void checkPersonIdentificationNumber(Person person) { //to test the function a whole person is needed
--   String identNumber = person.getIdentNumber(); //person has a lot more fields
--   ...
--}
-+void checkPersonIdentificationNumber(String identNumber) {
-+   ...
-+}
-```
-
 
 # SOLID
 
@@ -1524,11 +1523,11 @@ class TagPost : Post {
 }
 
 // The evaluation of the first character ‘#’ will now be handled elsewhere 
-// If "@" posts have to be added - this will be done with another class without chnaging Post
+// If "@" posts have to be added - this will be done with another class without changing Post
 ```
 
 ## L — Liskov substitution principle
-
+TODO add comments 
 Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
 
 ```C#
@@ -1660,7 +1659,8 @@ Bloaters are code, methods and classes that have increased to such gargantuan pr
 
 ### Primitive Obsession
 Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed.  
-Remember state representation.
+`#LimitTheStateRepresentation`
+`#ProceduralProgramingVsOOP`
 
 ### Data Clumps
 Two or more peaces of data that appear together all the time.
@@ -1740,7 +1740,8 @@ class SomeRepository {
    }
 }
 ```
-Resolving Data Clumps "moves" the behavior into the extracted class and makes it resable, when you chnage it it chnages everywhere, etc.  
+Resolving Data Clumps "moves" the behavior into the extracted class and makes it resable, when you chnage it it chnages everywhere, etc. 
+`#KeepLogicInTheDomain` 
 
 ## Object-Orientation Abusers
 All these smells are incomplete or incorrect application of object-oriented programming principles.
@@ -1749,20 +1750,42 @@ All these smells are incomplete or incorrect application of object-oriented prog
 3. Refused Bequest
 4. Alternative Classes with Different Interfaces
 
+TODO
+
 ## Change Preventers
 These smells mean that if you need to change something in one place in your code, you have to make many changes in other places too. Program development becomes much more complicated and expensive as a result.
 1. Divergent Change
 2. **Shotgun Surgery**
 3. Parallel Inheritance Hierarchies
 
+### Shotgun Surgery
+Making any modifications requires that you make many small changes to many different classes.
+
+`#MoveMethod` `#MoveField` `#InlineClass` `#KeepLogicInTheDomain` 
+
+
 ## Dispensables
 A dispensable is something pointless and unneeded whose absence would make the code cleaner, more efficient and easier to understand.
 1. Comments
-2. **Duplicate Code**
+2. Duplicate Code
 3. Lazy Class
 4. **Data Class**
 5. Dead Code
 6. **Speculative Generality**
+
+### Data Class
+These are simply containers for data used by other classes. These classes do not contain any additional functionality and cannot independently operate on the data that they own.
+
+```java
+class Order {
+   private LocalDateTime orderDate;
+   Private List<OrderItem> items;
+
+   // getters, setters
+   // nothing else
+}
+```
+`#KeepLogicInTheDomain`
 
 ### Speculative Generality
 A code that is written because of feature that might arrive in the future.
@@ -1770,30 +1793,40 @@ We're bad guessers!
 It makes the code hard to reason about. Code is read more often than it's written.
 Increases abstraction.
 
-**Premature Optimization Is the Root of All Evil**
-A code that is written in a certain way because it will be more performant. 
+```java
+class TheWorld {
+   private List<ElvisPresly> elvises; //in case he gets colonned one day
+}
+```
+This leads to:
+```java
+elvises.get(0) //we know he is the one and only for now
+```
 
-Source of bad performance:
-* IO us slower than memory and CPU by a factor of millions
-* Objects that are meant to be created once
-   * Pools (Connection pools, Thread pools)
-   * Factories 
-   * Jackson ObjectMapper
-* Regexes might be slow
-
-Don't do something just because you think it's slow. The JVM optimizes a lot under the hood
-Iterating a List of 10 elements is super fast, dont need to wori about it!
-
-**Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is.**
-* VisualVM
-* FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
+> **Premature Optimization Is the Root of All Evil**
+> A code that is written in a certain way because it will be more performant. 
+> 
+> Source of bad performance:
+> * IO us slower than memory and CPU by a factor of millions
+> * Objects that are meant to be created once
+>    * Pools (Connection pools, Thread pools)
+>    * Factories 
+>    * Jackson ObjectMapper
+> * Regexes might be slow
+> 
+> Don't do something just because you think it's slow. The JVM optimizes a lot under the hood
+> Iterating a List of 10 elements is super fast, dont need to wori about it!
+> 
+> **Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is.**
+> * VisualVM
+> * FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
  
 
 ## Couplers
 All the smells in this group contribute to excessive coupling between classes or show what happens if coupling is replaced by excessive delegation.
 1. Feature Envy
 2. Inappropriate Intimacy
-3. **Message Chains**
+3. **Message Chains** - `#LawOfDemeter`
 4. Middle Man
 5. Incomplete Library Class
 
