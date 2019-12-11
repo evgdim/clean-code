@@ -272,15 +272,7 @@ git commit -m"<b>SOMEPROJECT-245</b> Support upsert operations in CRUD repositor
 </pre>
 
 ## Don't get naming paralysis (or any paralysis in that matter). 
-Yes, names are very important but they're not important enough to waste huge amounts of time on. If you can't think up a good name in 10 minutes, move on.
-
-> # HIDDEN CHAPTER - Generl skills
-> ## Naming to general skills mapping:
-> * Consistent
-> * Organized
-> * Communicate it with others
-> * Tell the Truth
-> * Responisbe
+Yes, names are very important but they're not important enough to waste huge amounts of time on. If you can't think up a good name in X minutes, move on.
 
 # Variables
 ## Minimize the scope of variables
@@ -1658,7 +1650,27 @@ Bloaters are code, methods and classes that have increased to such gargantuan pr
 5. **Data Clumps**
 
 ### Primitive Obsession
-Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed.  
+Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed. 
+
+```java
+String carRegistrationNumber;
+```
+
+```java
+class CarRegistrationNumber {
+   private String cityIdentifier; // e.g. CB
+   private String number; // 1234
+   private String pstfixCode; // KM
+
+   public CarRegistrationNumber(String carRegistrationNumber) {
+      // parse the parameter carRegistrationNumber and initialize the class fields
+      // throw exception if the parameter is not a valid car registration number
+   }
+
+   // put all logic that is related to that number in this class
+}
+```
+
 `#LimitTheStateRepresentation`
 `#ProceduralProgramingVsOOP`
 
@@ -1750,7 +1762,54 @@ All these smells are incomplete or incorrect application of object-oriented prog
 3. Refused Bequest
 4. Alternative Classes with Different Interfaces
 
-TODO
+### Switch Statements
+```java
+class Bird {
+  // ...
+  double getSpeed() {
+    switch (type) {
+      case EUROPEAN:
+        return getBaseSpeed();
+      case AFRICAN:
+        return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+      case NORWEGIAN_BLUE:
+        return (isNailed) ? 0 : getBaseSpeed(voltage);
+    }
+    throw new RuntimeException("Should be unreachable");
+  }
+}
+```
+
+```java
+abstract class Bird {
+  // ...
+  abstract double getSpeed();
+}
+
+class European extends Bird {
+  double getSpeed() {
+    return getBaseSpeed();
+  }
+}
+class African extends Bird {
+  double getSpeed() {
+    return getBaseSpeed() - getLoadFactor() * numberOfCoconuts;
+  }
+}
+class NorwegianBlue extends Bird {
+  double getSpeed() {
+    return (isNailed) ? 0 : getBaseSpeed(voltage);
+  }
+}
+
+// Somewhere in client code
+speed = bird.getSpeed();
+```
+
+### Temporary Field
+Temporary fields get their values (and thus are needed by objects) only under certain circumstances. Outside of these circumstances, they’re empty.
+`#OrderHierarchiExample`
+`#ExtractClass` `#ReplaceMethodWithMethodObject`
 
 ## Change Preventers
 These smells mean that if you need to change something in one place in your code, you have to make many changes in other places too. Program development becomes much more complicated and expensive as a result.
@@ -1804,10 +1863,11 @@ elvises.get(0) //we know he is the one and only for now
 ```
 
 > **Premature Optimization Is the Root of All Evil**
+>
 > A code that is written in a certain way because it will be more performant. 
 > 
 > Source of bad performance:
-> * IO us slower than memory and CPU by a factor of millions
+> * IO operations are slower than memory and CPU by a factor of millions
 > * Objects that are meant to be created once
 >    * Pools (Connection pools, Thread pools)
 >    * Factories 
@@ -1815,11 +1875,12 @@ elvises.get(0) //we know he is the one and only for now
 > * Regexes might be slow
 > 
 > Don't do something just because you think it's slow. The JVM optimizes a lot under the hood
-> Iterating a List of 10 elements is super fast, dont need to wori about it!
+> Iterating a List of 100 elements is super fast, dont need to worry about it!
 > 
-> **Write code that works (and is readable, testable and maintainable) then use profilers and to find out where the problem is.**
+> **Write code that works (and is readable, testable and maintainable) then use profilers and Load performance tests to find out where the problem is.**
 > * VisualVM
 > * FlightRecorder - [link](https://www.baeldung.com/java-flight-recorder-monitoring)
+> * Gatling - [link](https://gatling.io/)
  
 
 ## Couplers
@@ -1836,10 +1897,15 @@ All the smells in this group contribute to excessive coupling between classes or
 * Log errors/exceptions  
 * Log input, output
 * Log Side effects
+   * Any use-case can be reproduced by having the **input**, **output** and the **side effects**
 * Avoid logging computed values/results of pure functions - e.g. the "input is 1 and 2" "the sum = 3"
+* Avoid logging constant things, that can easily be found in the code
+   * "Entered method X"
+   * "End of method Y" 
 
 # Sources
 
 1. Clean Code by Uncle Bob Martin
 2. https://sourcemaking.com/refactoring/smells
-3. https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
+3. https://refactoring.guru/
+4. https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
