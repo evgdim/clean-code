@@ -1,6 +1,9 @@
 # <center>How to fix working code</center>
 <center>Evgeni Dimitrov</center>
 
+# Safe Harbour
+If you use the following and fail, I don't care.
+
 
 # Overview
 
