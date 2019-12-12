@@ -35,7 +35,7 @@ Broken window principle.
 The biggest problem with code is when it works!
 
 1. Right after the code is working and the unit tests are done.
-2. In the scope of a rlatevly big change.
+2. In the scope of a relatively big change.
 3. Before the testing has started.
 
 ## Questions to answer
