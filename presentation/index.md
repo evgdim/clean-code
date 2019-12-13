@@ -368,11 +368,11 @@ System.out.println(customerNumber);// => 123123
 ```
 
 * Maps are not for pairs of objects that does not represent key-value pairs a "bag" of objects - use objects or Tuples(but only of the scope is small)
-```java
-   Map<String, Object> person = new HashMap<>();
-   person.put("firstName", "Michael");
-   person.put("lastName", "Jordan");
-   return person;
+```diff
+-   Map<String, Object> people = new HashMap<>();
+-   people.put("Michael", "Jordan");
+-   people.put("Scottie ", "Pippen");
+-   return people;
 ``` 
 
 ## Limit the state representation
