@@ -108,6 +108,12 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 
 ## Avoid Mental Mapping and "encription"
 
+Don't force readers of the code to remember something
+```
+l = leftIndex
+r = rightIndex
+x = the item that have to be found
+```
 ```diff
 -int binarySearch(int arr[], int l, int r, int x) {
 -   if (r >= l) {
@@ -167,7 +173,7 @@ HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStu
 >    * `Rest endpoints should be in plural and represent a resource`
 >    * `The database scripts should be placed in folder <project root>/databse`
 
-## Extract variable when it makes the code more readable 
+## Extract variable or a function when it makes the code more readable 
 ```diff
 -if(context.getAttribute("TEST_FLAG")) {...}
 +boolean isTestMode = context.getAttribute("TEST_FLAG");
@@ -208,6 +214,25 @@ List<int[]> getFlaggedCells() {
 
 ```java
 // BEST - extract class
+
+class Cell {
+   private CellStatus status;
+   private int x;
+   private int y;
+
+   public Cell(int[] cellProperties) { //the bad domain design end here and will not spread to the rest of the application
+      this.status = CellStatus.from(cellProperties[0]);
+      this.x = cellProperties[1];
+      this.y = cellProperties[2];
+   }
+
+   public boolean isFlagged() {
+      return this.status == CellStatus.FLAGGED;
+   }
+
+   ...
+}
+
 List<Cell> getFlaggedCells() { 
    List<Cell> flaggedCells = new ArrayList<Cell>();
    for (Cell cell : gameBoard) {
