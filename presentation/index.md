@@ -565,6 +565,9 @@ boolean isStatusError(Response response) {
 ## Function Arguments
 
 ### Avoid output argumnets and in general avoid modifying arguments
+
+Don't mutate the arguments
+
 * Arguments -> for input 
 * Returning object -> for output
 
@@ -575,11 +578,11 @@ boolean isStatusError(Response response) {
 Overdraft calculateOverdraftLimitForClient(Client client, ByteArraysOutputStram transactionsFile); //not OK
 ```
 ### Avoid boolean parameters
-* function does more than one thing and violates SPR 
 * makes the call hard to read 
 ```java
 activateUser(user, true); //what does true mean here??`
 ```
+* function does more than one thing and violates SPR 
 * often happens to big old functions that have to change 
 
 ### Consider wrapping some of the function arguments in a class when appropriate
@@ -598,6 +601,7 @@ BigDecimal devide(Integer divident, Integer divisor) {
    ...
 }
 ```
+`#LimitTheStateRepresentation`
 
 ### Clearly define the interface of the function
 ```diff
