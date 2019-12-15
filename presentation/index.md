@@ -696,25 +696,25 @@ int doubleIt(int number) {
 
 ## Separate side effects from business logic
 
->You get on the train
->
->&darr;
->   
->The train goes from A to B
->
->&darr;
->
->You get off the train
+You get on the train
 
-> [side effect] Get all of the input from database, rest service, etc.
->
->&darr;
->   
-> [pure functions] Do all of the business logic, calculations, etc.
->
->&darr;
->
-> [side effect] Persists in the database, file, etc.
+&darr;
+   
+The train goes from A to B
+
+&darr;
+
+You get off the train
+
+ [side effect] Get all of the input from database, rest service, etc.
+
+&darr;
+   
+ [pure functions] Do all of the business logic, calculations, etc.
+
+&darr;
+
+ [side effect] Persists in the database, file, etc.
 
 Try to split functions to one pure function and up to two(input and output) impure functions. 
 
