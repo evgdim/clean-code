@@ -477,7 +477,7 @@ Smaller methods run faster - it's more likely that the JIT compiler will optimiz
 
 You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
-## Do one thing
+## Do one thing and follow SRP
 
 **FUNCTIONS SHOULD DO ONE THING. THEY SHOULD DO IT WELL.
 THEY SHOULD DO IT ONLY.**
@@ -639,11 +639,13 @@ Integer findPersonAge(...) {
    }
 }
 ```
-### Don't return a "message" to tell if the function has complete successfully or something went wrong.
+### Don't return a "message" to tell if the function has completed successfully or something went wrong.
 
 ## Refactoring Demo =>
 
 # Side Effects
+
+Side effects have their own level of abstraction.
 
 ## Extract environment (Date-time, properties, current OS)
 
