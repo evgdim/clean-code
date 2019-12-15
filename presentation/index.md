@@ -455,8 +455,6 @@ order.setStatus("I still can set whatever string I want here");// ???
 
 ## Small
 
-~~Function should fit on the screen.~~
-
 ***Function has the right size when you cannot extract anything more from it as a function.***
 
 ### Extract method
