@@ -462,13 +462,7 @@ Extract method candidates:
 * `if` - else blocks bigger than X lines
 * loop blocks bigger than X lines
 * `try` blocks bigger than X lines
-
-Smaller methods run faster - it's more likely that the JIT compiler will optimize them over big methods
-
-You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
-
-Don't use a `{}` for lambdas!
-
+* Lambdas with `{}`
 ```diff
 -items.forEach(item -> {
 -   ...
@@ -478,6 +472,10 @@ Don't use a `{}` for lambdas!
 
 +items.forEach(item -> processItem(item));
 ```
+
+Smaller methods run faster - it's more likely that the JIT compiler will optimize them over big methods
+
+You should be able to explain what a function does in no more than 20 words without using words like “and” and “or”. 
 
 ## Do one thing
 
