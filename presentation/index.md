@@ -786,17 +786,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 }
 ```
 
-### Don't base `return` logic on try-catch
-```diff
-try {
-
-} catch(SomeException e) {
-   logger.error(...);
--   return ...
-+   throw e
-}
-``` 
-
 ## Use Unchecked/Runtime Exceptions
 ### Checked Exception violate the Open/Closed Principle
 If you throw a checked exception from a method in your code and the catch is three levels
