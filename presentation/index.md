@@ -277,8 +277,6 @@ interface OrderRepository {
 Both `save` and `insert` a good names but having them both in one project will make others wonder if they do the same thing.
 
 ## Class names
-Class name should be noun
-
 Single Responsibility Principle - SRP tells us that a class should have only one reason to change. The name of a class should explain this reason.
 
 Avoid pre/postfixes that doesn't realy mean much:
@@ -733,6 +731,10 @@ class OrdersService {
 }
 ```
 
+* The code is easy to reason about
+* The Functional Core is easy to test
+* It's easier to make IO side effects parallel and improve performance
+
 # Error Handling
 
 ## Don't ignore exceptions! In the rear cases when this is needed - add a comment.
@@ -870,39 +872,7 @@ class Url {
 }
 ```
 
-## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
-* Make all variables and class properties final untill you need them to be mutable 
-* don't add setters in a class untill you need it
-* don't add getters in a class untill you need it
-```diff
-//we need the number of items cheaper than 10€ in an order
--class Order {
--   ...
--   private List<OrderItem> items;
--
--   public List<OrderItem> getItems() {
--      return items;
--   }
--}
--
--// is some other class
--order.getItems().stream()
--   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
--   .count();
-
-+class Order {
-+   ...
-+   private List<OrderItem> items;
-+
-+   public List<OrderItem> getNumberOfCheapItems() {
-+      return this.items.stream()
-+     .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
-+     .count();
-+   }
-+}
-```
-
-Prefer OOP over procedural code
+## Prefer OOP over procedural code
 
 Procedural code
 ```java
@@ -940,6 +910,38 @@ class Order {
       }
    }
 }
+```
+
+## Be as restrictive as possible. Loosen up the restrictions only if needed. e.g.
+* Make all variables and class properties final untill you need them to be mutable 
+* don't add setters in a class untill you need it
+* don't add getters in a class untill you need it
+```diff
+//we need the number of items cheaper than 10€ in an order
+-class Order {
+-   ...
+-   private List<OrderItem> items;
+-
+-   public List<OrderItem> getItems() {
+-      return items;
+-   }
+-}
+-
+-// is some other class
+-order.getItems().stream()
+-   .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
+-   .count();
+
++class Order {
++   ...
++   private List<OrderItem> items;
++
++   public List<OrderItem> getNumberOfCheapItems() {
++      return this.items.stream()
++     .filter(item -> item.getPrice().compareTo(BigDecimal.TEN) < 0)
++     .count();
++   }
++}
 ```
 
 ## Prefer factory methods when multiple constructors are needed
