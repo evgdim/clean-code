@@ -794,7 +794,7 @@ try {
 }
 ``` 
 
-## Use Unchecked Exceptions
+## Use Unchecked/Runtime Exceptions
 ### Checked Exception violate the Open/Closed Principle
 If you throw a checked exception from a method in your code and the catch is three levels
 above, you must declare that exception in the signature of each method between you and
@@ -872,6 +872,8 @@ class Url {
 }
 ```
 
+`#LimitTheStateRepresentation`
+
 ## Prefer OOP over procedural code
 
 Procedural code
@@ -944,32 +946,6 @@ class Order {
 +}
 ```
 
-## Prefer factory methods when multiple constructors are needed
-```java
-class Person {
-   private final String name;
-   private Person(String name) {
-      this.name = name;
-   }
-
-   public static Person of(String name) {
-      return new Person(name);
-   }
-}
-```
-* Unlike constructors, factory methods have names.
-* Factory methods are not required to create a new object each time they’re invoked 
-   * caching
-* Factory methods can return an object of any subtype of their return type
-* The class of the returned object, from factory method, can vary from call to call as a function of the input parameters
-   * `EnumSet` factory methods return `RegularEnumSet` (backed by a single long) if the set has less than 64 elements
-   * `EnumSet` factory methods return `JumboEnumSet` (backed by an array of long) if the set has more than 64 elements
-
-## Use dependency injection
-* Testing can be performed using mock objects.
-* Loosely couple architecture.
-* Makes it easier to remove all knowledge of a concrete implementation that a class needs to use.
-
 ## Avoid multiple variables/fields depending on each other(Data Clumps)
 Extract Data clumps as classes
 
@@ -1030,12 +1006,12 @@ Instead
 
 ```java
 class Account {
-   Status status; // [Active, Inactive, Locked]
+   Status status; // [Active, Inactive, Locked] - in the state of the object the status is either Active or Inactive, but never Locked
    List<Lock> locks; 
    // No getter setter, addLock(Lock), removeLock(Lock)
 
    Status getStatus() {
-      if(!this.locks.isEmpty()) return Status.Locked;
+      if(!this.locks.isEmpty()) return Status.Locked; // The locked status us computed from the list of locks
       return this.status;
    }
 }
@@ -1076,6 +1052,27 @@ class Person {
    }
 }
 ```
+
+## Prefer factory methods when multiple constructors are needed
+```java
+class Person {
+   private final String name;
+   private Person(String name) {
+      this.name = name;
+   }
+
+   public static Person of(String name) {
+      return new Person(name);
+   }
+}
+```
+* Unlike constructors, factory methods have names.
+* Factory methods are not required to create a new object each time they’re invoked 
+   * caching
+* Factory methods can return an object of any subtype of their return type
+* The class of the returned object, from factory method, can vary from call to call as a function of the input parameters
+   * `EnumSet` factory methods return `RegularEnumSet` (backed by a single long) if the set has less than 64 elements
+   * `EnumSet` factory methods return `JumboEnumSet` (backed by an array of long) if the set has more than 64 elements
 
 ## Mutability is the new GOTO
 Mutability should be avoided or "pushed" to lower level.
@@ -1129,67 +1126,13 @@ public static final Complex ONE = new Complex(1, 0);
 public static final Complex I = new Complex(0, 1);
 ```
 
-## Avoid generating getters and setters right away
-If you have to do something with the memebers of a class - implement this logic into the class itself, don't expose the member.
-
-```java
-class Order {
-   private List<OrderItem> items;
-
-   boolean doesContainExpensiveItem(BigDecimal limit) {
-      return this.items.stream().anyMatch(item -> item.getPrice().isMoreThan(limit));
-   }
-
-   boolean areAllItemsAvailable(Predicate<OrderItem> isAvailable) { // checking availability is a side effect(e.g. checking in a database) that's why we use higher order function
-      return this.items.allMatch(isAvailable)
-   }
-}
-```
-
-## How to make an immutable class
-```java
-public final class ImmutableStudent { // prevent inheritance
-   private final int id;             // fields are final
-   private final String name;
-   private final Dissertation dissertation;
-   private final List<UniversityClass> classes;        
-      
-   //fileds are set only in constructor or a factory menthod
-   public ImmutableStudent(int id, String name, Dissertation dissertation, List<UniversityClass> classes) { 
-      this.name = name;
-      this.id = id;
-      this.dissertation = dissertation;
-      this.classes = classes;
-   }
-   public int getId() { // there are getters but no setters
-      return id;
-   }
-   public String getName() {
-      return name;
-   } 
-   // a copy of referenced objects are created to prevet someone who owns a reference to the object to chnage it
-   public Dissertation getDissertation() { 
-      return dissertation.clone();
-   } 
-
-   // prevent someone adding or deeting from the list
-   public List<UniversityClass> getClasses() {
-      return Collections.unmodifiableList(this.classes);
-   }
-
-   // to mutate an immutable object - copy it
-   public ImmutableStudent withName(String name) { 
-      return new ImmutableStudent(this.id, name, this.dissertation);
-   }
-}
-```
-
 ## Immutable objects are:
 * Easier to reason about - NO OBJECTS IN IVALID STATE
 * Easier to share/cache
 * Thread-safe - no synchronisation needed
 * Good Map keys and Set elements, since these typically do not change once created (also the hash method can be cached or precomputed for better performance)
 
+## Immutable Order Example
 ```java
 public abstract class Order {
     protected final LocalDateTime orderDate;
@@ -1358,7 +1301,6 @@ public class LawOfDemeter {
       int price = pizza.getPrice();
       
       // (3) it's okay to call methods on any objects we create
-      cheeseTopping = new CheeseTopping();
       float weight = cheeseTopping.getWeightUsed();
       
       // (4) any directly held component objects
@@ -1397,10 +1339,6 @@ void someFunction(Order order) { //This is a bad code!!!
 }
 ```
 
-## Wrap 3th party librabries
-* Minimize your dependencies upon it: You can choose to move to a different library in the future. 
-* Makes it easier to mock out third-party calls when you are testing your own code.
-
 ## The structure of the project should express the meaning of the project
 
 This doesent tell much about the project itself. It's pretty generic.
@@ -1436,12 +1374,15 @@ Interfaces
 
 If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
 
-```java
-class SomeService {
-   private PersonService personService; //the interface PersonService should not contain methods that are not used by SomeService
+`#ClearlyDefineTheInterfaceOfAFunction`
 
-   void someMethod() {
-      this.personService.findById(id); //nothig else from personService is used in this class
+```java
+class OrderService {
+   private PersonService personService; //the interface PersonService should not contain methods that are not used by OrderService
+
+   void sendOrderToClient(long clientId) {
+      this.personService.findById(clientId); //nothig else from personService is used in this class
+      ...
    }
 }
 ```
@@ -1461,220 +1402,21 @@ public interface PersonService extends PersonReader, PersonPersister {
 }
 ```
 
-# SOLID
+```java
+class OrderService {
+   private PersonReader personReader; //has only the required methods - findById
 
-## S — Single responsibility principle
-
-A module or class should have responsibility over a single part of the functionality provided by the software.
-A class or module should have one, and only one, reason to be changed.
-
-https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4
-
-```C#
-class User 
-{
-    void CreatePost(Database db, string postMessage)
-    {
-        try
-        {
-            db.Add(postMessage);
-        }
-        catch (Exception ex)
-        {
-            db.LogError("An error occured: ", ex.ToString());
-            File.WriteAllText("\LocalErrors.txt", ex.ToString());
-        }
-    }
+   void sendOrderToClient(long clientId) {
+      this.personReader.findById(clientId);
+      ...
+   }
 }
 ```
-* create a new post
-* log an error in the database
-* and log an error in a local file
-
-## Solution
-```C#
-class Post {
-    private ErrorLogger errorLogger; // injected
-    void CreatePost(Database db, string postMessage) {
-        try {
-            db.Add(postMessage);
-        }
-        catch (Exception ex) {
-            errorLogger.log(ex.ToString())
-        }
-    }
-}
-
-class ErrorLogger {
-    void log(string error) {
-      db.LogError("An error occured: ", error);
-      File.WriteAllText("\LocalErrors.txt", error);
-    }
-}
-```
-two classes that each has one responsibility:
-* to create a post 
-* to log an error
-
-Another example is class from the web layer (e.g. Spring @Controller) to have business logic in it, or a class from the service layer to have something different than business logic in it(e.g. data access)
-
-## O — Open/closed principle
-
-software entities (classes, modules, functions, etc.) should be open for extensions, but closed for modification
-
-```C#
-class Post {
-    void CreatePost(Database db, string postMessage) {
-        if (postMessage.StartsWith("#")) {
-            db.AddAsTag(postMessage);
-        } else {
-            db.Add(postMessage);
-        }
-        // what if post starts with "@" or "$"
-    }
-}
-```
-
-```C#
-class Post {
-    void CreatePost(Database db, string postMessage) {
-        db.Add(postMessage);
-    }
-}
-
-class TagPost : Post {
-    override void CreatePost(Database db, string postMessage) {
-        db.AddAsTag(postMessage);
-    }
-}
-
-// The evaluation of the first character ‘#’ will now be handled elsewhere 
-// If "@" posts have to be added - this will be done with another class without changing Post
-```
-
-## L — Liskov substitution principle
-TODO add comments 
-Objects in a program should be replaceable with instances of their subtypes without altering the correctness of that program
-
-```C#
-class Post{
-    void CreatePost(Database db, string postMessage) {
-        db.Add(postMessage);
-    }
-}
-
-class TagPost : Post{
-    override void CreatePost(Database db, string postMessage) {
-        db.AddAsTag(postMessage);
-    }
-}
-
-class MentionPost : Post {
-    void CreateMentionPost(Database db, string postMessage) {
-        string user = postMessage.parseUser();
-
-        db.NotifyUser(user);
-        db.OverrideExistingMention(user, postMessage);
-        base.CreatePost(db, postMessage);
-    }
-}
-
-class PostHandler {
-    private database = new Database();
-
-    void HandleNewPosts() {
-        List<string> newPosts = database.getUnhandledPostsMessages();
-
-        foreach (string postMessage in newPosts) {
-            Post post;
-            if (postMessage.StartsWith("#")) {
-                post = new TagPost();
-            }
-            else if (postMessage.StartsWith("@")) {
-                post = new MentionPost();
-            }
-            else {
-                post = new Post();
-            }
-            post.CreatePost(database, postMessage);
-        }
-    }
-}
-```
-
-```C#
-class MentionPost : Post
-{
-    override void CreatePost(Database db, string postMessage) {
-        string user = postMessage.parseUser();
-
-        NotifyUser(user);
-        OverrideExistingMention(user, postMessage)
-        base.CreatePost(db, postMessage);
-    }
-
-    private void NotifyUser(string user) {
-        db.NotifyUser(user);
-    }
-
-    private void OverrideExistingMention(string user, string postMessage) {
-        db.OverrideExistingMention(_user, postMessage);
-    }
-}
-```
-
-## D - Dependency inversion principle
-High-level modules should not depend on low-level modules. Both should depend on abstractions.
-
-```C#
-class Post
-{
-    private ErrorLogger errorLogger = new ErrorLogger(); //this violates the principle - If we wanted to use a different kind of logger, we would have to modify the class
-
-    void CreatePost(Database db, string postMessage)
-    {
-        try
-        {
-            db.Add(postMessage);
-        }
-        catch (Exception ex)
-        {
-            errorLogger.log(ex.ToString())
-        }
-    }
-}
-```
-
-## Solution
-
-```C#
-class Post
-{
-    private Logger logger;
-
-    public Post(Logger injectedLogger) //injected
-    {
-        logger = injectedLogger;
-    }
-
-    void CreatePost(Database db, string postMessage)
-    {
-        try
-        {
-            db.Add(postMessage);
-        }
-        catch (Exception ex)
-        {
-            logger.log(ex.ToString())
-        }
-    }
-}
-```
-
 
 # Code smells
 https://www.youtube.com/watch?v=D4auWwMsEnY
 https://www.industriallogic.com/wp-content/uploads/2005/09/smellstorefactorings.pdf
+
 ## Bloaters
 Bloaters are code, methods and classes that have increased to such gargantuan proportions that they are hard to work with. Usually these smells do not crop up right away, rather they accumulate over time as the program evolves (and especially when nobody makes an effort to eradicate them).
 1. Long Method
@@ -1924,18 +1666,6 @@ All the smells in this group contribute to excessive coupling between classes or
 3. **Message Chains** - `#LawOfDemeter`
 4. Middle Man
 5. Incomplete Library Class
-
-## Other
-
-### Noisy logging
-* Log errors/exceptions  
-* Log input, output
-* Log Side effects
-   * Any use-case can be reproduced by having the **input**, **output** and the **side effects**
-* Avoid logging computed values/results of pure functions - e.g. the "input is 1 and 2" "the sum = 3"
-* Avoid logging constant things, that can easily be found in the code
-   * "Entered method X"
-   * "End of method Y" 
 
 # Sources
 
