@@ -645,6 +645,11 @@ Integer findPersonAge(...) {
 
 # Side Effects
 
+* Read/Write to the environment
+* Database access
+* WebService calls
+* File system access 
+
 Side effects have their own level of abstraction.
 
 ## Extract environment (Date-time, properties, current OS)
