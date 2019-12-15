@@ -92,20 +92,6 @@ Avoid single letter variables
 + void copyChars(char source[],char destination[]) {
 ```
 
-## Use Searchable Names
-
-* Prefer long descriptive names over abbreviations
-```java
-HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor
-```
-* Short descriptive names are still the best
-* Prefer pronounceable names
-
-```diff
-- private long elpsTime;
-+ private long elapsedTimeInMilliseconds;
-```
-
 ## Avoid Mental Mapping and "encription"
 
 Don't force readers of the code to remember something
