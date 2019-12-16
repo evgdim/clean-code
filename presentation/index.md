@@ -170,6 +170,9 @@ Stick to expressions when they could be read as a sentence
 if(type.startsWith("BASIC_")) {...}
 ```
 
+`Eclipse - Ctrl + 1 -> Extract local variable`
+`IntelliJ - Ctrl + Alt + V`
+
 ## Avoid Magic Numbers, Magic String, etc.
 Use named constants, extract variabled or methods to express your intention
 ```java
@@ -237,9 +240,6 @@ List<Cell> getFlaggedCells() {
             .collect(toList());
 }
 ```
-
-## Avoid member prefixes
-Avoid prefixing member variables with “m_” . Your classes and functions should be small enough that you don’t need prefixes.
 
 ## Avoid abriviations, unless they are common and well known (HTTP, EGN, EIK, etc.)
 ## Avoid terms and metaphores that are hard for other to understand
@@ -361,7 +361,7 @@ System.out.println(customerNumber);// => 123123
 
 ## Limit the state representation
 
-The primitive types usually does not enforse the context.
+The primitive types usually does not enforce the context.
 Prefer types with more expressive values!
 
 ```java
@@ -444,6 +444,9 @@ order.setStatus("I still can set whatever string I want here");// ???
 ***Function has the right size when you cannot extract anything more from it as a function.***
 
 ### Extract method
+`Eclipse - Ctrl + 1 -> Extract Method`
+`IntelliJ - Ctrl + Alt + M`
+
 Extract method candidates:
 * `if` - else blocks bigger than X lines
 * loop blocks bigger than X lines
@@ -473,6 +476,7 @@ THEY SHOULD DO IT ONLY.**
 Don't mix different abstractions in one function:
 * business logic
 * data access
+* error handling
 * http/server stuff
 * working with byte buffers, output/input streams, etc
 
@@ -518,7 +522,7 @@ public void myFunction(List<Person> people) {
 }
 ```
 
-## Reading Code from Top to Bottom: The Stepdown Rule
+## Reading Code from Top to Bottom: The Stepdown Rule (Extract method when it makes the code more readable)
 ```java
 if (null != response && response.getAdvice() != null && response.getAdvice().getStatus().equals(AdviceStatusEnum.ERROR)) {
       responseEntity = new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -609,10 +613,12 @@ Optional<Person> findByName(String name) {
 }
 ```
 
-### Functions either return the value that they are mean to produce or throw an error 
-### void functions either complete successfully or throw an error
+### Throw errors, don't return them
 
-### Don't return NULL to "express" that something went wrong.
+* Functions either return the value that they are mean to produce or throw an error 
+* void functions either complete successfully or throw an error
+* Don't return NULL to "express" that something went wrong.
+* Don't return a "message" to tell if the function has completed successfully or something went wrong.
 
 ```java
 Integer findPersonAge(...) {
@@ -625,7 +631,6 @@ Integer findPersonAge(...) {
    }
 }
 ```
-### Don't return a "message" to tell if the function has completed successfully or something went wrong.
 
 ## Refactoring Demo =>
 
@@ -729,11 +734,13 @@ class OrdersService {
 ## Don't ignore exceptions! In the rear cases when this is needed - add a comment.
 "Something does not work and we don't know why" - situation.
 
-```java
+```diff
 try {
    ...
 } catch(Exception e) {
-   e.printStackTrace(); // NEVER
+-   e.printStackTrace(); // NEVER
+-   logger.error("Error in some function " + e.getMessage()); // Will not provide enough context. e.g. "Error in some function NullPointerException"
++   logger.error("Error in some function ", e);
 }
 ```
 ## At least log them. 
@@ -1025,7 +1032,7 @@ class Person {
       return this.name;
    }
 
-   public Optional<String> getAddress() { // can be null - forse the users of the class to check it
+   public Optional<String> getAddress() { // can be null - force the users of the class to check it
       return Optional.ofNullable(this.address)
    }
 }
@@ -1145,7 +1152,7 @@ class NewOrder extends Order {
 
     public ProcessedOrder process(LocalDateTime sentToCourierAt, String courierName) {
         if(this.items.isEmpty()) { // no need to a null check here, because items is checked in the constructor and cannot be changed
-            throw new NoOrderItemsException("You have to add items, Bro!");
+            throw new NoOrderItemsException("Order without items cannot be processed.");
         }
         return new ProcessedOrder(this.orderDate, this.items, this.client, sentToCourierAt, courierName);
     }
@@ -1311,7 +1318,8 @@ public class LawOfDemeter {
 
 This will make `someFunction` unusable in other parts of the code. `someFunction` is tightly couple to the piece of code that provides `order`
 ```java
-void someFunction(Order order) { //This is a bad code!!! 
+//NOT OK
+void someFunction(Order order) {  
    order.getItems().get(0); //We know that at this point the order have only one item... 
    ... 
 }
@@ -1349,6 +1357,17 @@ Expose only the functionality that has to be exposed
 
 ## The I in SOLID
 Interfaces
+
+```java
+// NOT OK
+interface PersonSerivce {
+   // all methods of PersonSerivce - findById, save, etc
+}
+
+class PersonSerivceImpl implements PersonSerivce {
+   // implementations of all methods of PersonSerivce - findById, save, etc
+}
+```
 
 If a class has a dependency that has a couple of methods but only 1-2 are used - conside defineing an interface that has only this 1-2 methods.
 
@@ -1392,8 +1411,8 @@ class OrderService {
 ```
 
 # Code smells
-https://www.youtube.com/watch?v=D4auWwMsEnY
-https://www.industriallogic.com/wp-content/uploads/2005/09/smellstorefactorings.pdf
+* https://www.youtube.com/watch?v=D4auWwMsEnY
+* Smells to Refactorings - https://www.industriallogic.com/wp-content/uploads/2005/09/smellstorefactorings.pdf
 
 ## Bloaters
 Bloaters are code, methods and classes that have increased to such gargantuan proportions that they are hard to work with. Usually these smells do not crop up right away, rather they accumulate over time as the program evolves (and especially when nobody makes an effort to eradicate them).
@@ -1404,7 +1423,7 @@ Bloaters are code, methods and classes that have increased to such gargantuan pr
 5. **Data Clumps**
 
 ### Primitive Obsession
-Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforsed. 
+Passing around objects that are too dumm (primitive) and peaces of code decide what to do with them based on some context that is not enforced. 
 
 ```java
 String carRegistrationNumber;
@@ -1602,9 +1621,10 @@ class Order {
 
 ### Speculative Generality
 A code that is written because of feature that might arrive in the future.
-We're bad guessers!
-It makes the code hard to reason about. Code is read more often than it's written.
-Increases abstraction.
+
+* We're bad guessers!
+* It makes the code hard to reason about. Code is read more often than it's written.
+* Increases abstraction.
 
 ```java
 class TheWorld {
